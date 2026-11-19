@@ -568,6 +568,8 @@ body.dark .bottom-nav {
 .vigie-card-uptime {
     margin-left: auto;
     text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
 
     .value {
         font-family: "JetBrains Mono", monospace;
@@ -575,8 +577,20 @@ body.dark .bottom-nav {
     }
 
     .unit {
-        font-size: 11px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11.5px;
         color: $muted;
+    }
+}
+
+// Historique (sondes sans temps de réponse) : même hauteur que le graphique
+.vigie-card > .vigie-beats {
+    height: 46px;
+    margin-top: 12px;
+    align-items: center;
+
+    i {
+        height: 16px;
     }
 }
 

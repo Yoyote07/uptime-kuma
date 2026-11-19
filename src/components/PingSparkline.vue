@@ -18,7 +18,7 @@
                 vector-effect="non-scaling-stroke"
             />
         </svg>
-        <span class="ping-value">{{ lastPing }} ms</span>
+        <span v-if="showValue" class="ping-value">{{ lastPing }} ms</span>
     </div>
 </template>
 
@@ -34,6 +34,16 @@ export default {
         maxPoints: {
             type: Number,
             default: 60,
+        },
+        /** Afficher la dernière valeur en ms */
+        showValue: {
+            type: Boolean,
+            default: true,
+        },
+        /** Lisser la courbe (moyenne glissante) pour un rendu plus calme */
+        smooth: {
+            type: Boolean,
+            default: false,
         },
     },
 
@@ -53,14 +63,22 @@ export default {
         /** Temps de réponse récents (les sondes passives n'en ont pas) */
         points() {
             const beats = this.$root.heartbeatList?.[this.monitorId] || [];
-            return beats
+            const pings = beats
                 .map((beat) => beat.ping)
                 .filter((ping) => typeof ping === "number")
                 .slice(-this.maxPoints);
+            if (!this.smooth) {
+                return pings;
+            }
+            const windowSize = 5;
+            return pings.map((_, index) => {
+                const slice = pings.slice(Math.max(0, index - windowSize + 1), index + 1);
+                return slice.reduce((a, b) => a + b, 0) / slice.length;
+            });
         },
 
         lastPing() {
-            return this.points[this.points.length - 1];
+            return Math.round(this.points[this.points.length - 1]);
         },
 
         coordinates() {

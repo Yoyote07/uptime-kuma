@@ -5,7 +5,10 @@
             <div class="vigie-top">
                 <div>
                     <h1 class="vigie-h1">Vigie</h1>
-                    <div class="vigie-sub">Surveillance du homelab</div>
+                    <div class="vigie-sub">
+                        {{ $root.stats.up }} / {{ $root.stats.active }} en ligne · {{ averageUptime }} % sur 24 h ·
+                        {{ averagePing }} ms
+                    </div>
                 </div>
                 <span class="vigie-pill" :class="{ bad: $root.stats.down > 0 }">
                     <b />
@@ -24,54 +27,14 @@
                 </div>
             </div>
 
-            <div class="vigie-stats">
-                <div class="vigie-stat">
-                    <div class="l">En ligne</div>
-                    <div class="v">
-                        {{ $root.stats.up }} <small>/ {{ $root.stats.active }}</small>
-                    </div>
-                    <div class="d">sondes actives</div>
-                </div>
-                <div class="vigie-stat">
-                    <div class="l">Disponibilité 24 h</div>
-                    <div class="v">{{ averageUptime }} <small>%</small></div>
-                    <div class="d">moyenne de toutes les sondes</div>
-                </div>
-                <div class="vigie-stat">
-                    <div class="l">Temps de réponse</div>
-                    <div class="v">{{ averagePing }} <small>ms</small></div>
-                    <div class="d">moyenne sur 24 h</div>
-                </div>
-                <div class="vigie-stat">
-                    <div class="l">Pannes · pauses</div>
-                    <div class="v">
-                        {{ $root.stats.down }} <small>· {{ $root.stats.pause }}</small>
-                    </div>
-                    <div class="d">{{ $root.stats.maintenance }} en maintenance</div>
-                </div>
-            </div>
-
-            <div class="vigie-chips">
-                <button
-                    v-for="filter in filters"
-                    :key="filter.key"
-                    type="button"
-                    class="vigie-chip"
-                    :class="{ on: activeFilter === filter.key }"
-                    @click="activeFilter = filter.key"
-                >
-                    {{ filter.label }}<span>{{ filter.count }}</span>
-                </button>
-            </div>
-
             <div class="vigie-grid">
                 <VigieMonitorCard v-for="monitor in filteredMonitors" :key="monitor.id" :monitor="monitor" />
                 <div v-if="filteredMonitors.length === 0" class="vigie-empty">Aucune sonde ne correspond.</div>
             </div>
 
-            <h2 class="vigie-section">Événements importants</h2>
+            <h2 v-if="importantHeartBeatListLength > 0" class="vigie-section">Événements importants</h2>
 
-            <div class="shadow-box table-shadow-box table-wrapper">
+            <div v-if="importantHeartBeatListLength > 0" class="shadow-box table-shadow-box table-wrapper">
                 <div class="mb-3 text-end">
                     <button
                         class="btn btn-sm btn-outline-danger"
@@ -212,11 +175,10 @@ export default {
 
         filteredMonitors() {
             const query = this.search.trim().toLowerCase();
-            return this.cardMonitors.filter(
-                (monitor) =>
-                    this.matchesFilter(monitor, this.activeFilter) &&
-                    (!query || monitor.name.toLowerCase().includes(query))
-            );
+            const isDown = (monitor) => this.matchesFilter(monitor, "down");
+            return this.cardMonitors
+                .filter((monitor) => !query || monitor.name.toLowerCase().includes(query))
+                .sort((a, b) => isDown(b) - isDown(a));
         },
 
         averageUptime() {

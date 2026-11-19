@@ -7,21 +7,18 @@
                 <div class="vigie-card-name">{{ monitor.name }}</div>
                 <div class="vigie-card-state">
                     <span class="vigie-dot" />
-                    {{ state.label }} · {{ typeLabel }}
+                    {{ state.label }}
                 </div>
             </div>
             <div class="vigie-card-uptime">
                 <div class="value">{{ uptimeText }}</div>
-                <div class="unit">24 h</div>
+                <div class="unit">{{ pingText }}</div>
             </div>
         </div>
 
-        <PingSparkline v-if="hasPing" :monitor-id="monitor.id" />
-        <div v-else class="vigie-card-passive">
-            {{ monitor.type === "push" ? "Sonde passive · attend un signal" : "Pas de temps de réponse" }}
-        </div>
-
-        <div class="vigie-beats">
+        <!-- Un seul visuel : le graphique si la sonde mesure un temps de réponse, sinon l'historique -->
+        <PingSparkline v-if="hasPing" :monitor-id="monitor.id" :show-value="false" :smooth="true" />
+        <div v-else class="vigie-beats">
             <i v-for="n in emptyBeats" :key="`e${n}`" class="empty" />
             <i v-for="(beat, index) in recentBeats" :key="index" :class="`s${beat.status}`" />
         </div>
@@ -108,6 +105,11 @@ export default {
                 default:
                     return { key: "unknown", label: "Inconnu" };
             }
+        },
+
+        pingText() {
+            const pings = this.beats.filter((beat) => typeof beat.ping === "number");
+            return pings.length ? `${pings[pings.length - 1].ping} ms` : "24 h";
         },
 
         uptimeText() {
