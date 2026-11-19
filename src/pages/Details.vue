@@ -1,6 +1,12 @@
 <template>
     <transition name="slide-fade" appear>
-        <div v-if="monitor">
+        <div v-if="monitor" class="vigie-detail">
+            <router-link to="/dashboard" class="vigie-back">← Vue d'ensemble</router-link>
+
+            <!-- En-tête Vigie : avatar, nom, adresse, état, actions -->
+            <div class="vigie-detail-head">
+                <div class="vigie-card-avatar vigie-detail-avatar">{{ monitor.name.charAt(0).toUpperCase() }}</div>
+                <div class="vigie-detail-title">
             <router-link v-if="group !== ''" :to="monitorURL(monitor.parent)">
                 {{ group }}
             </router-link>
@@ -115,6 +121,13 @@
                 </span>
             </p>
 
+                </div>
+
+                <span class="vigie-pill" :class="`tone-${status.color}`" data-testid="monitor-status">
+                    <b />
+                    {{ status.text }}
+                </span>
+
             <div class="functions">
                 <div class="btn-group" role="group">
                     <button v-if="monitor.active" class="btn btn-normal" @click="pauseDialog">
@@ -144,25 +157,16 @@
                     </button>
                 </div>
             </div>
+            </div>
 
             <div class="shadow-box">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-12">
                         <HeartbeatBar :monitor-id="monitor.id" />
                         <span class="word">
                             {{ $t("checkEverySecond", [monitor.interval]) }} ({{
                                 secondsToHumanReadableFormat(monitor.interval)
                             }})
-                        </span>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <span
-                            class="badge rounded-pill"
-                            :class="'bg-' + status.color"
-                            style="font-size: 30px"
-                            data-testid="monitor-status"
-                        >
-                            {{ status.text }}
                         </span>
                     </div>
                 </div>
