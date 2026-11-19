@@ -7,7 +7,7 @@
                 <div class="vigie-card-name">{{ monitor.name }}</div>
                 <div class="vigie-card-state">
                     <span class="vigie-dot" />
-                    {{ state.label }}
+                    {{ state.label }}<template v-if="speed !== 'fast' && state.key === 'up'"> · {{ speed === "slow" ? "lent" : "très lent" }}</template>
                 </div>
             </div>
             <div class="vigie-card-uptime">
@@ -30,6 +30,16 @@ import PingSparkline from "./PingSparkline.vue";
 import { UP, DOWN, PENDING, MAINTENANCE } from "../util.ts";
 
 const BEATS_SHOWN = 40;
+
+// Seuils de vitesse (moyenne des 5 dernières mesures)
+const SLOW_MS = 100;
+const VERY_SLOW_MS = 300;
+
+const SPEED_COLORS = {
+    fast: "#6fbfa3",
+    slow: "#d9b46c",
+    "very-slow": "#e0926c",
+};
 
 const STATE_COLORS = {
     up: "#6fbfa3",
@@ -121,7 +131,29 @@ export default {
          * @returns {string} couleur hexadécimale
          */
         stateColor() {
+            if (this.state.key === "up") {
+                return SPEED_COLORS[this.speed];
+            }
             return STATE_COLORS[this.state.key] || STATE_COLORS.unknown;
+        },
+
+        /**
+         * Vitesse récente : rapide, lente ou très lente
+         * @returns {string} fast | slow | very-slow
+         */
+        speed() {
+            const recent = this.beats
+                .filter((beat) => typeof beat.ping === "number")
+                .slice(-5)
+                .map((beat) => beat.ping);
+            if (recent.length === 0) {
+                return "fast";
+            }
+            const average = recent.reduce((a, b) => a + b, 0) / recent.length;
+            if (average >= VERY_SLOW_MS) {
+                return "very-slow";
+            }
+            return average >= SLOW_MS ? "slow" : "fast";
         },
 
         pingText() {
