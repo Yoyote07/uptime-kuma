@@ -1022,3 +1022,264 @@ body.dark .monitor-list.homelab-grid > .item {
         overflow-x: auto;
     }
 }
+
+// ============================================================
+// Toutes les autres pages : formulaires, paramètres, fenêtres…
+// ============================================================
+
+body.dark {
+    // Titres de page
+    .container-fluid > h1,
+    main h1.mb-3,
+    .settings-content-header {
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    // Fenêtres (ajout de notification, confirmations…)
+    .modal-content {
+        background: rgba(14, 20, 38, 0.96);
+        border: 1px solid $glass-border;
+        border-radius: 18px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        color: $dark-font-color;
+    }
+
+    .modal-header,
+    .modal-footer {
+        border-color: $glass-border;
+    }
+
+    .modal-backdrop.show {
+        opacity: 0.6;
+    }
+
+    .btn-close {
+        filter: invert(1) grayscale(1) brightness(1.6);
+    }
+
+    // Menus déroulants
+    .dropdown-menu {
+        background: rgba(14, 20, 38, 0.97);
+        border: 1px solid $glass-border;
+        border-radius: 12px;
+        padding: 6px;
+
+        .dropdown-item {
+            border-radius: 8px;
+            color: $dark-font-color;
+
+            &:hover,
+            &.active {
+                background: rgba(143, 163, 217, 0.15);
+                color: #fff;
+            }
+        }
+    }
+
+    // Champs
+    .form-control,
+    .form-select,
+    .multiselect__tags,
+    .multiselect__input,
+    .multiselect__single {
+        background-color: rgba(10, 15, 30, 0.7) !important;
+        border-color: $glass-border !important;
+        color: #e6e9f5 !important;
+        border-radius: 12px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: rgba(143, 163, 217, 0.55) !important;
+        box-shadow: 0 0 0 3px rgba(143, 163, 217, 0.15) !important;
+    }
+
+    .multiselect__content-wrapper {
+        background: rgba(14, 20, 38, 0.97);
+        border-color: $glass-border;
+    }
+
+    .form-label,
+    .form-text,
+    .form-check-label {
+        color: $dark-font-color;
+    }
+
+    .form-text {
+        color: $muted !important;
+    }
+
+    .input-group-text {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: $glass-border;
+        color: $muted;
+    }
+
+    // Listes et tableaux
+    .list-group-item {
+        background: transparent !important;
+        border-color: $glass-border !important;
+    }
+
+    .table {
+        --bs-table-bg: transparent;
+        --bs-table-hover-bg: rgba(255, 255, 255, 0.03);
+        color: $dark-font-color;
+
+        > :not(caption) > * > * {
+            border-color: $glass-border;
+        }
+
+        th {
+            font-size: 12.5px;
+            font-weight: 500;
+            color: $muted;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+    }
+
+    // Boutons secondaires
+    .btn-normal,
+    .btn-secondary,
+    .btn-outline-secondary,
+    .btn-outline-normal {
+        background: $glass-bg;
+        border: 1px solid $glass-border;
+        color: #e6e9f5;
+
+        &:hover {
+            background: rgba(143, 163, 217, 0.15);
+            border-color: rgba(143, 163, 217, 0.4);
+            color: #fff;
+        }
+    }
+
+    .btn-danger {
+        background: rgba(224, 108, 117, 0.18);
+        border: 1px solid rgba(224, 108, 117, 0.45);
+        color: #f3c3c7;
+
+        &:hover {
+            background: rgba(224, 108, 117, 0.3);
+            color: #fff;
+        }
+    }
+
+    .btn-outline-danger {
+        border-color: rgba(224, 108, 117, 0.45);
+        color: $danger;
+
+        &:hover {
+            background: rgba(224, 108, 117, 0.15);
+            color: #fff;
+        }
+    }
+
+    .btn {
+        border-radius: 12px;
+    }
+
+    // Barre « Enregistrer » collée en bas des formulaires
+    .fixed-bottom-bar {
+        background-color: rgba(12, 18, 34, 0.85) !important;
+        border-top: 1px solid $glass-border;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 0 0 16px 16px;
+    }
+
+    // Paramètres : menu à gauche
+    .shadow-box-settings {
+        min-height: 0 !important;
+    }
+
+    .settings-menu .menu-item {
+        color: $muted;
+        border-left: none !important;
+        border-radius: 12px !important;
+    }
+
+    .settings-menu .menu-item:hover {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: #e6e9f5;
+    }
+
+    .settings-menu .active .menu-item {
+        background: rgba(143, 163, 217, 0.15) !important;
+        color: #e6e9f5;
+        box-shadow: inset 3px 0 0 $accent;
+    }
+
+    .settings-content .settings-content-header {
+        background: transparent !important;
+        border-bottom: 1px solid $glass-border !important;
+    }
+
+    // Notifications de l'interface (en bas à droite)
+    .Vue-Toastification__toast {
+        background: rgba(14, 20, 38, 0.95) !important;
+        border: 1px solid $glass-border;
+        border-radius: 14px !important;
+        backdrop-filter: blur(12px);
+        color: #e6e9f5 !important;
+        font-family: "Outfit", sans-serif;
+    }
+
+    .Vue-Toastification__toast--success {
+        box-shadow: inset 4px 0 0 $primary !important;
+    }
+
+    .Vue-Toastification__toast--error {
+        box-shadow: inset 4px 0 0 $danger !important;
+    }
+
+    // Alertes Bootstrap (bandeaux d'info)
+    .alert {
+        border-radius: 14px;
+    }
+
+    // Petites étiquettes d'état
+    .badge {
+        border-radius: 8px;
+    }
+}
+
+// Téléphone : formulaires et paramètres
+@media (max-width: 900px) {
+    body.dark {
+        .container-fluid > h1,
+        main h1.mb-3,
+        .settings-content-header {
+            font-size: 22px;
+        }
+
+        .shadow-box {
+            border-radius: 14px;
+        }
+
+        .shadow-box-settings {
+            padding: 12px !important;
+        }
+
+        .settings-menu .menu-item {
+            margin: 4px 0;
+        }
+
+        // Les boutons des barres d'action prennent toute la largeur
+        .fixed-bottom-bar .btn {
+            width: 100%;
+        }
+
+        .modal-dialog {
+            margin: 10px;
+        }
+    }
+
+    // Les notifications ne sont plus cachées par l'ancienne barre du bas
+    .toast-container {
+        margin-bottom: 0 !important;
+    }
+}
