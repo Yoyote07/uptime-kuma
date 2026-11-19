@@ -14,8 +14,9 @@
 
         <!-- Barre latérale (bureau) — thème homelab « Vigie » -->
         <aside v-if="!$root.isMobile && $root.loggedIn" class="vigie-side">
-            <router-link to="/dashboard" class="vigie-logo" title="Sentinelle">
-                <font-awesome-icon icon="heartbeat" />
+            <router-link to="/dashboard" class="vigie-brand-side">
+                <span class="vigie-logo"><font-awesome-icon icon="heartbeat" /></span>
+                <span>Sentinelle</span>
             </router-link>
 
             <router-link
@@ -26,7 +27,7 @@
                 :class="{ on: isSideActive(item) }"
             >
                 <font-awesome-icon :icon="item.icon" />
-                <span class="vigie-tip">{{ item.label }}</span>
+                <span class="vigie-label">{{ item.label }}</span>
             </router-link>
 
             <div class="vigie-spacer" />
@@ -38,7 +39,7 @@
                 class="vigie-nav vigie-update"
             >
                 <font-awesome-icon icon="arrow-alt-circle-up" />
-                <span class="vigie-tip">{{ $t("New Update") }}</span>
+                <span class="vigie-label">{{ $t("New Update") }}</span>
             </a>
 
             <router-link
@@ -47,7 +48,7 @@
                 :class="{ on: $route.path.startsWith('/settings') && !$route.path.includes('notifications') }"
             >
                 <font-awesome-icon icon="cog" />
-                <span class="vigie-tip">{{ $t("Settings") }}</span>
+                <span class="vigie-label">{{ $t("Settings") }}</span>
             </router-link>
 
             <button
@@ -57,7 +58,10 @@
                 @click="$root.logout"
             >
                 <span class="vigie-avatar">{{ $root.usernameFirstChar }}</span>
-                <span class="vigie-tip">{{ $t("Logout") }}<template v-if="$root.username"> ({{ $root.username }})</template></span>
+                <span class="vigie-label">
+                    <span class="vigie-user-name">{{ $root.username || "Compte" }}</span>
+                    <span class="vigie-user-action">{{ $t("Logout") }}</span>
+                </span>
             </button>
         </aside>
 
@@ -136,7 +140,7 @@ export default {
         sideNav() {
             return [
                 { to: "/dashboard", icon: "th-large", label: "Vue d'ensemble", match: ["/dashboard", "/list"] },
-                { to: "/add", icon: "plus", label: this.$t("Add New Monitor"), match: ["/add", "/clone", "/edit"] },
+                { to: "/add", icon: "plus", label: "Ajouter une sonde", match: ["/add", "/clone", "/edit"] },
                 { to: "/settings/notifications", icon: "bell", label: "Alertes", match: ["/settings/notifications"] },
                 { to: "/maintenance", icon: "wrench", label: this.$t("Maintenance"), match: ["/maintenance", "/add-maintenance"] },
                 { to: "/manage-status-page", icon: "stream", label: this.$t("Status Pages"), match: ["/manage-status-page", "/add-status-page"] },

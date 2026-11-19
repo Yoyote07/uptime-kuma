@@ -142,13 +142,12 @@ body.dark {
     top: 16px;
     bottom: 16px;
     left: 16px;
-    width: 76px;
+    width: 230px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 18px 0;
+    gap: 4px;
+    padding: 18px 12px;
     background: $glass-bg;
     border: 1px solid $glass-border;
     border-radius: 16px;
@@ -156,34 +155,54 @@ body.dark {
     -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 
+.vigie-brand-side {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 6px 18px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid $glass-border;
+    font-size: 19px;
+    font-weight: 600;
+    color: #e6e9f5 !important;
+    text-decoration: none;
+}
+
 .vigie-logo {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border-radius: 12px;
     display: grid;
     place-items: center;
-    margin-bottom: 18px;
-    font-size: 18px;
-    color: $accent !important;
+    font-size: 17px;
+    flex-shrink: 0;
+    color: $accent;
     background: rgba(143, 163, 217, 0.15);
     border: 1px solid rgba(143, 163, 217, 0.35);
 }
 
 .vigie-nav {
     position: relative;
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
-    display: grid;
-    place-items: center;
-    font-size: 19px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 12px;
+    font-size: 15px;
     color: $muted !important;
     background: transparent;
     border: none;
+    text-align: left;
     text-decoration: none;
     transition:
         background-color 0.2s,
         color 0.2s;
+
+    > svg {
+        width: 18px;
+        flex-shrink: 0;
+    }
 
     &:hover {
         background: rgba(255, 255, 255, 0.05);
@@ -198,8 +217,8 @@ body.dark {
             content: "";
             position: absolute;
             left: -12px;
-            top: 14px;
-            bottom: 14px;
+            top: 10px;
+            bottom: 10px;
             width: 3px;
             border-radius: 3px;
             background: $accent;
@@ -211,28 +230,38 @@ body.dark {
     }
 }
 
-// Info-bulle au survol
-.vigie-tip {
-    position: absolute;
-    left: 64px;
+.vigie-label {
     white-space: nowrap;
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-size: 12.5px;
-    color: #e6e9f5;
-    background: rgba(17, 24, 45, 0.92);
-    border: 1px solid $glass-border;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s;
-}
-
-.vigie-nav:hover .vigie-tip {
-    opacity: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .vigie-spacer {
     flex: 1;
+}
+
+.vigie-user {
+    height: 56px;
+    padding: 0 8px;
+    margin-top: 6px;
+    border-top: 1px solid $glass-border !important;
+    border-radius: 0 0 12px 12px;
+
+    .vigie-label {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+    .vigie-user-name {
+        color: #e6e9f5;
+        font-size: 14px;
+    }
+
+    .vigie-user-action {
+        font-size: 12px;
+        color: $muted;
+    }
 }
 
 .vigie-avatar {
@@ -241,6 +270,7 @@ body.dark {
     border-radius: 50%;
     display: grid;
     place-items: center;
+    flex-shrink: 0;
     font-size: 14px;
     font-weight: 500;
     color: #e6e9f5;
@@ -249,7 +279,7 @@ body.dark {
 }
 
 .vigie-main {
-    margin-left: 108px;
+    margin-left: 262px;
     padding-top: 16px;
 }
 

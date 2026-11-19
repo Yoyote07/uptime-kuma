@@ -19,7 +19,7 @@ class Discord extends NotificationProvider {
 
         try {
             let config = this.getAxiosConfigWithProxy({});
-            const discordDisplayName = notification.discordUsername || "Uptime Kuma";
+            const discordDisplayName = notification.discordUsername || "Sentinelle";
             const webhookUrl = new URL(notification.discordWebhookUrl);
             if (notification.discordChannelType === "postToThread") {
                 webhookUrl.searchParams.append("thread_id", notification.threadId);
@@ -73,8 +73,8 @@ class Discord extends NotificationProvider {
             if (messageFormat === "minimalist") {
                 const content =
                     heartbeatJSON["status"] === DOWN
-                        ? "🔴 " + monitorJSON["name"] + " is down."
-                        : "🟢 " + monitorJSON["name"] + " is up.";
+                        ? "🔴 " + monitorJSON["name"] + " est hors service."
+                        : "🟢 " + monitorJSON["name"] + " fonctionne.";
                 let payload = {
                     username: discordDisplayName,
                     content: content,
@@ -126,33 +126,36 @@ class Discord extends NotificationProvider {
                     username: discordDisplayName,
                     embeds: [
                         {
-                            title: "❌ Your service " + monitorJSON["name"] + " went down. ❌",
-                            color: 16711680,
+                            title: "🔴 " + monitorJSON["name"] + " est hors service",
+                            color: 0xe06c75,
+                            footer: { text: "Sentinelle · homelab" },
                             timestamp: heartbeatJSON["time"],
                             fields: [
                                 {
-                                    name: "Service Name",
+                                    name: "Service",
                                     value: monitorJSON["name"],
+                                    inline: true,
                                 },
                                 ...(!notification.disableUrl && addess
                                     ? [
                                           {
-                                              name: monitorJSON["type"] === "push" ? "Service Type" : "Service URL",
+                                              name: monitorJSON["type"] === "push" ? "Type" : "Adresse",
                                               value: addess,
+                                              inline: true,
                                           },
                                       ]
                                     : []),
                                 {
-                                    name: "Went Offline",
+                                    name: "Hors service depuis",
                                     // F for full date/time
                                     value: `<t:${wentOfflineTimestamp}:F>`,
                                 },
                                 {
-                                    name: `Time (${heartbeatJSON["timezone"]})`,
+                                    name: `Heure (${heartbeatJSON["timezone"]})`,
                                     value: heartbeatJSON["localDateTime"],
                                 },
                                 {
-                                    name: "Error",
+                                    name: "Erreur",
                                     value: heartbeatJSON["msg"] == null ? "N/A" : heartbeatJSON["msg"],
                                 },
                             ],
@@ -187,26 +190,29 @@ class Discord extends NotificationProvider {
                     username: discordDisplayName,
                     embeds: [
                         {
-                            title: "✅ Your service " + monitorJSON["name"] + " is up! ✅",
-                            color: 65280,
+                            title: "🟢 " + monitorJSON["name"] + " est de retour",
+                            color: 0x6fbfa3,
+                            footer: { text: "Sentinelle · homelab" },
                             timestamp: heartbeatJSON["time"],
                             fields: [
                                 {
-                                    name: "Service Name",
+                                    name: "Service",
                                     value: monitorJSON["name"],
+                                    inline: true,
                                 },
                                 ...(!notification.disableUrl && addess
                                     ? [
                                           {
-                                              name: monitorJSON["type"] === "push" ? "Service Type" : "Service URL",
+                                              name: monitorJSON["type"] === "push" ? "Type" : "Adresse",
                                               value: addess,
+                                              inline: true,
                                           },
                                       ]
                                     : []),
                                 ...(wentOfflineTimestamp
                                     ? [
                                           {
-                                              name: "Went Offline",
+                                              name: "Hors service depuis",
                                               // F for full date/time
                                               value: `<t:${wentOfflineTimestamp}:F>`,
                                           },
@@ -215,21 +221,23 @@ class Discord extends NotificationProvider {
                                 ...(downtimeDuration
                                     ? [
                                           {
-                                              name: "Downtime Duration",
+                                              name: "Durée de la panne",
                                               value: downtimeDuration,
+                                              inline: true,
                                           },
                                       ]
                                     : []),
                                 // Show server timezone for parity with the DOWN notification embed
                                 {
-                                    name: `Time (${heartbeatJSON["timezone"]})`,
+                                    name: `Heure (${heartbeatJSON["timezone"]})`,
                                     value: heartbeatJSON["localDateTime"],
                                 },
                                 ...(heartbeatJSON["ping"] != null
                                     ? [
                                           {
-                                              name: "Ping",
+                                              name: "Temps de réponse",
                                               value: heartbeatJSON["ping"] + " ms",
+                                              inline: true,
                                           },
                                       ]
                                     : []),
