@@ -12,95 +12,64 @@
             </div>
         </div>
 
-        <!-- Barre latérale (bureau) — thème homelab « Vigie » -->
-        <aside v-if="!$root.isMobile && $root.loggedIn" class="vigie-side">
-            <router-link to="/dashboard" class="vigie-brand-side">
+        <!-- Barre de navigation en haut (PC et téléphone) — Sentinelle -->
+        <nav v-if="$root.loggedIn" class="vigie-topbar">
+            <router-link to="/dashboard" class="vigie-brand-top">
                 <span class="vigie-logo"><font-awesome-icon icon="heartbeat" /></span>
                 <span>Sentinelle</span>
             </router-link>
 
-            <router-link
-                v-for="item in sideNav"
-                :key="item.to"
-                :to="item.to"
-                class="vigie-nav"
-                :class="{ on: isSideActive(item) }"
-            >
-                <font-awesome-icon :icon="item.icon" />
-                <span class="vigie-label">{{ item.label }}</span>
-            </router-link>
+            <div class="vigie-links">
+                <router-link
+                    v-for="item in sideNav"
+                    :key="item.to"
+                    :to="item.to"
+                    class="vigie-nav"
+                    :class="{ on: isSideActive(item) }"
+                >
+                    <font-awesome-icon :icon="item.icon" />
+                    <span class="vigie-label">{{ item.label }}</span>
+                </router-link>
+                <router-link
+                    to="/settings/general"
+                    class="vigie-nav"
+                    :class="{ on: $route.path.startsWith('/settings') && !$route.path.includes('notifications') }"
+                >
+                    <font-awesome-icon icon="cog" />
+                    <span class="vigie-label">{{ $t("Settings") }}</span>
+                </router-link>
+            </div>
 
-            <div class="vigie-spacer" />
+            <div class="vigie-top-right">
+                <a
+                    v-if="hasNewVersion"
+                    target="_blank"
+                    href="https://github.com/louislam/uptime-kuma/releases"
+                    class="vigie-nav vigie-update"
+                    :title="$t('New Update')"
+                >
+                    <font-awesome-icon icon="arrow-alt-circle-up" />
+                </a>
+                <button
+                    v-if="$root.socket.token !== 'autoLogin'"
+                    class="vigie-user"
+                    type="button"
+                    :title="$t('Logout')"
+                    @click="$root.logout"
+                >
+                    <span class="vigie-avatar">{{ $root.usernameFirstChar }}</span>
+                    <span class="vigie-user-text">
+                        <span class="vigie-user-name">{{ $root.username || "Compte" }}</span>
+                        <span class="vigie-user-action">{{ $t("Logout") }}</span>
+                    </span>
+                </button>
+            </div>
+        </nav>
 
-            <a
-                v-if="hasNewVersion"
-                target="_blank"
-                href="https://github.com/louislam/uptime-kuma/releases"
-                class="vigie-nav vigie-update"
-            >
-                <font-awesome-icon icon="arrow-alt-circle-up" />
-                <span class="vigie-label">{{ $t("New Update") }}</span>
-            </a>
-
-            <router-link
-                to="/settings/general"
-                class="vigie-nav"
-                :class="{ on: $route.path.startsWith('/settings') && !$route.path.includes('notifications') }"
-            >
-                <font-awesome-icon icon="cog" />
-                <span class="vigie-label">{{ $t("Settings") }}</span>
-            </router-link>
-
-            <button
-                v-if="$root.socket.token !== 'autoLogin'"
-                class="vigie-nav vigie-user"
-                type="button"
-                @click="$root.logout"
-            >
-                <span class="vigie-avatar">{{ $root.usernameFirstChar }}</span>
-                <span class="vigie-label">
-                    <span class="vigie-user-name">{{ $root.username || "Compte" }}</span>
-                    <span class="vigie-user-action">{{ $t("Logout") }}</span>
-                </span>
-            </button>
-        </aside>
-
-        <!-- En-tête mobile -->
-        <header v-if="$root.isMobile" class="vigie-mobile-header">
-            <router-link to="/dashboard" class="vigie-brand">
-                <font-awesome-icon icon="heartbeat" />
-                <span>Sentinelle</span>
-            </router-link>
-        </header>
-
-        <main :class="{ 'vigie-main': !$root.isMobile && $root.loggedIn }">
+        <main :class="{ 'vigie-main': $root.loggedIn }">
             <router-view v-if="$root.loggedIn" />
             <Login v-if="!$root.loggedIn && $root.allowLoginDialog" />
         </main>
-
-        <!-- Mobile Only -->
-        <div v-if="$root.isMobile" style="width: 100%; height: calc(60px + env(safe-area-inset-bottom))" />
-        <nav v-if="$root.isMobile && $root.loggedIn" class="bottom-nav">
-            <router-link to="/dashboard" class="nav-link">
-                <div><font-awesome-icon icon="tachometer-alt" /></div>
-                {{ $t("Home") }}
-            </router-link>
-
-            <router-link to="/add" class="nav-link">
-                <div><font-awesome-icon icon="plus" /></div>
-                {{ $t("Add") }}
-            </router-link>
-
-            <router-link to="/settings/notifications" class="nav-link">
-                <div><font-awesome-icon icon="bell" /></div>
-                Alertes
-            </router-link>
-
-            <router-link to="/settings" class="nav-link">
-                <div><font-awesome-icon icon="cog" /></div>
-                {{ $t("Settings") }}
-            </router-link>
-        </nav>
 
         <button
             v-if="numActiveToasts != 0"
