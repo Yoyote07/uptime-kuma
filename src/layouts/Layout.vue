@@ -12,120 +12,64 @@
             </div>
         </div>
 
-        <!-- Desktop header -->
-        <header v-if="!$root.isMobile" class="d-flex flex-wrap justify-content-center py-3 mb-3 border-bottom">
-            <router-link
-                to="/dashboard"
-                class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none"
-            >
-                <object class="bi me-2 ms-4" width="40" height="40" data="/icon.svg" />
-                <span class="fs-4 title">{{ $t("Uptime Kuma") }}</span>
+        <!-- Barre latérale (bureau) — thème homelab « Vigie » -->
+        <aside v-if="!$root.isMobile && $root.loggedIn" class="vigie-side">
+            <router-link to="/dashboard" class="vigie-logo" title="Vigie">
+                <font-awesome-icon icon="heartbeat" />
             </router-link>
+
+            <router-link
+                v-for="item in sideNav"
+                :key="item.to"
+                :to="item.to"
+                class="vigie-nav"
+                :class="{ on: isSideActive(item) }"
+            >
+                <font-awesome-icon :icon="item.icon" />
+                <span class="vigie-tip">{{ item.label }}</span>
+            </router-link>
+
+            <div class="vigie-spacer" />
 
             <a
                 v-if="hasNewVersion"
                 target="_blank"
                 href="https://github.com/louislam/uptime-kuma/releases"
-                class="btn btn-primary me-3"
+                class="vigie-nav vigie-update"
             >
                 <font-awesome-icon icon="arrow-alt-circle-up" />
-                {{ $t("New Update") }}
+                <span class="vigie-tip">{{ $t("New Update") }}</span>
             </a>
 
-            <ul class="nav nav-pills">
-                <li v-if="$root.loggedIn" class="nav-item me-2">
-                    <router-link to="/manage-status-page" class="nav-link">
-                        <font-awesome-icon icon="stream" />
-                        {{ $t("Status Pages") }}
-                    </router-link>
-                </li>
-                <li v-if="$root.loggedIn" class="nav-item me-2">
-                    <router-link to="/dashboard" class="nav-link">
-                        <font-awesome-icon icon="tachometer-alt" />
-                        {{ $t("Dashboard") }}
-                    </router-link>
-                </li>
-                <li v-if="$root.loggedIn" class="nav-item">
-                    <div class="dropdown dropdown-profile-pic">
-                        <div class="nav-link" data-bs-toggle="dropdown">
-                            <div class="profile-pic">{{ $root.usernameFirstChar }}</div>
-                            <font-awesome-icon icon="angle-down" />
-                        </div>
+            <router-link
+                to="/settings/general"
+                class="vigie-nav"
+                :class="{ on: $route.path.startsWith('/settings') && !$route.path.includes('notifications') }"
+            >
+                <font-awesome-icon icon="cog" />
+                <span class="vigie-tip">{{ $t("Settings") }}</span>
+            </router-link>
 
-                        <!-- Header's Dropdown Menu -->
-                        <ul class="dropdown-menu">
-                            <!-- Username -->
-                            <li>
-                                <i18n-t
-                                    v-if="$root.username != null"
-                                    tag="span"
-                                    keypath="signedInDisp"
-                                    class="dropdown-item-text"
-                                >
-                                    <strong>{{ $root.username }}</strong>
-                                </i18n-t>
-                                <span v-if="$root.username == null" class="dropdown-item-text">
-                                    {{ $t("signedInDispDisabled") }}
-                                </span>
-                            </li>
+            <button
+                v-if="$root.socket.token !== 'autoLogin'"
+                class="vigie-nav vigie-user"
+                type="button"
+                @click="$root.logout"
+            >
+                <span class="vigie-avatar">{{ $root.usernameFirstChar }}</span>
+                <span class="vigie-tip">{{ $t("Logout") }}<template v-if="$root.username"> ({{ $root.username }})</template></span>
+            </button>
+        </aside>
 
-                            <li><hr class="dropdown-divider" /></li>
-
-                            <!-- Functions -->
-                            <li>
-                                <router-link
-                                    to="/maintenance"
-                                    class="dropdown-item"
-                                    :class="{ active: $route.path.includes('manage-maintenance') }"
-                                >
-                                    <font-awesome-icon icon="wrench" />
-                                    {{ $t("Maintenance") }}
-                                </router-link>
-                            </li>
-
-                            <li>
-                                <router-link
-                                    to="/settings/general"
-                                    class="dropdown-item"
-                                    :class="{ active: $route.path.includes('settings') }"
-                                >
-                                    <font-awesome-icon icon="cog" />
-                                    {{ $t("Settings") }}
-                                </router-link>
-                            </li>
-
-                            <li>
-                                <a
-                                    href="https://github.com/louislam/uptime-kuma/wiki"
-                                    class="dropdown-item"
-                                    target="_blank"
-                                >
-                                    <font-awesome-icon icon="info-circle" />
-                                    {{ $t("Help") }}
-                                </a>
-                            </li>
-
-                            <li v-if="$root.loggedIn && $root.socket.token !== 'autoLogin'">
-                                <button class="dropdown-item" @click="$root.logout">
-                                    <font-awesome-icon icon="sign-out-alt" />
-                                    {{ $t("Logout") }}
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </header>
-
-        <!-- Mobile header -->
-        <header v-else class="d-flex flex-wrap justify-content-center pt-2 pb-2 mb-3">
-            <router-link to="/dashboard" class="d-flex align-items-center text-dark text-decoration-none">
-                <object class="bi" width="40" height="40" data="/icon.svg" />
-                <span class="fs-4 title ms-2">Uptime Kuma</span>
+        <!-- En-tête mobile -->
+        <header v-if="$root.isMobile" class="vigie-mobile-header">
+            <router-link to="/dashboard" class="vigie-brand">
+                <font-awesome-icon icon="heartbeat" />
+                <span>Vigie</span>
             </router-link>
         </header>
 
-        <main>
+        <main :class="{ 'vigie-main': !$root.isMobile && $root.loggedIn }">
             <router-view v-if="$root.loggedIn" />
             <Login v-if="!$root.loggedIn && $root.allowLoginDialog" />
         </main>
@@ -138,14 +82,14 @@
                 {{ $t("Home") }}
             </router-link>
 
-            <router-link to="/list" class="nav-link">
-                <div><font-awesome-icon icon="list" /></div>
-                {{ $t("List") }}
-            </router-link>
-
             <router-link to="/add" class="nav-link">
                 <div><font-awesome-icon icon="plus" /></div>
                 {{ $t("Add") }}
+            </router-link>
+
+            <router-link to="/settings/notifications" class="nav-link">
+                <div><font-awesome-icon icon="bell" /></div>
+                Alertes
             </router-link>
 
             <router-link to="/settings" class="nav-link">
@@ -185,6 +129,20 @@ export default {
     },
 
     computed: {
+        /**
+         * Entrées de la barre latérale
+         * @returns {object[]} liens de navigation
+         */
+        sideNav() {
+            return [
+                { to: "/dashboard", icon: "th-large", label: "Vue d'ensemble", match: ["/dashboard", "/list"] },
+                { to: "/add", icon: "plus", label: this.$t("Add New Monitor"), match: ["/add", "/clone", "/edit"] },
+                { to: "/settings/notifications", icon: "bell", label: "Alertes", match: ["/settings/notifications"] },
+                { to: "/maintenance", icon: "wrench", label: this.$t("Maintenance"), match: ["/maintenance", "/add-maintenance"] },
+                { to: "/manage-status-page", icon: "stream", label: this.$t("Status Pages"), match: ["/manage-status-page", "/add-status-page"] },
+            ];
+        },
+
         // Theme or Mobile
         classes() {
             const classes = {};
@@ -226,6 +184,15 @@ export default {
     },
 
     methods: {
+        /**
+         * La page actuelle correspond-elle à cette entrée de la barre latérale ?
+         * @param {object} item entrée de navigation
+         * @returns {boolean} vrai si active
+         */
+        isSideActive(item) {
+            return item.match.some((prefix) => this.$route.path.startsWith(prefix));
+        },
+
         /**
          * Clear all toast notifications.
          * @returns {void}
