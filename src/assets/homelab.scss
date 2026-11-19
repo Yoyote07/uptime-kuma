@@ -128,6 +128,89 @@ body.dark {
     }
 }
 
+// ============================================================
+// Page de statut : une carte par sonde (graphique + stats)
+// ============================================================
+
+// Le cadre du groupe devient invisible : ce sont les cartes qui portent le style
+.shadow-box.homelab-group:not(.alert) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+}
+
+.monitor-list.homelab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+
+    > .item {
+        margin: 0 !important;
+        padding: 16px 18px 14px !important;
+        border-radius: 16px !important;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        background-color: #fff;
+        transition:
+            transform 0.25s ease,
+            border-color 0.25s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+        }
+
+        // Les deux colonnes de Kuma (infos | barre) passent l'une sous l'autre
+        > .row {
+            flex-direction: column;
+            margin: 0;
+
+            > [class*="col-"] {
+                width: 100%;
+                max-width: 100%;
+                flex: 0 0 100%;
+                padding: 0;
+            }
+
+            > [class*="col-"]:last-child {
+                margin-top: 10px;
+            }
+        }
+
+        .info {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .item-name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .extra-info:empty {
+            display: none;
+        }
+
+        .ping-sparkline {
+            height: 46px;
+            margin-top: 12px;
+        }
+    }
+}
+
+body.dark .monitor-list.homelab-grid > .item {
+    background-color: $glass-bg !important;
+    border-color: $glass-border;
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+
+    &:hover {
+        border-color: rgba(143, 163, 217, 0.4);
+    }
+}
+
 @keyframes homelab-aurora {
     0% {
         transform: translate(0, 0) scale(1);

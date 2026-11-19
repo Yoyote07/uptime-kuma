@@ -30,7 +30,7 @@
                 </h2>
 
                 <transition name="slide-fade-up">
-                    <div v-if="!isGroupCollapsed(group.element)" class="shadow-box monitor-list mt-4 position-relative">
+                    <div v-if="!isGroupCollapsed(group.element)" class="shadow-box monitor-list homelab-group mt-4 position-relative">
                         <div v-if="group.element.monitorList.length === 0" class="text-center no-monitor-msg">
                             {{ $t("No Monitors") }}
                         </div>
@@ -39,7 +39,7 @@
                         <!-- animation is not working, no idea why -->
                         <Draggable
                             v-model="group.element.monitorList"
-                            class="monitor-list"
+                            class="monitor-list homelab-grid"
                             group="same-group"
                             :disabled="!editMode"
                             :animation="100"
