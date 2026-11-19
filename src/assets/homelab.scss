@@ -291,6 +291,353 @@ body.dark .bottom-nav {
 }
 
 // ============================================================
+// Vue d'ensemble Vigie
+// ============================================================
+
+.vigie-content {
+    max-width: 1500px;
+}
+
+.vigie-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.vigie-h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.vigie-sub {
+    font-size: 14px;
+    color: $muted;
+}
+
+.vigie-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    color: $primary;
+    border: 1px solid rgba(111, 191, 163, 0.35);
+    background: rgba(111, 191, 163, 0.1);
+
+    b {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 0 4px rgba(111, 191, 163, 0.15);
+    }
+
+    &.bad {
+        color: $danger;
+        border-color: rgba(224, 108, 117, 0.4);
+        background: rgba(224, 108, 117, 0.1);
+
+        b {
+            box-shadow: 0 0 0 4px rgba(224, 108, 117, 0.18);
+        }
+    }
+}
+
+.vigie-top-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .btn {
+        border-radius: 12px;
+    }
+}
+
+.vigie-search {
+    width: 240px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    border: 1px solid $glass-border;
+    background: $glass-bg;
+    color: #e6e9f5;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+
+    &:focus {
+        border-color: rgba(143, 163, 217, 0.5);
+    }
+}
+
+.vigie-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.vigie-stat {
+    padding: 16px 20px;
+    border-radius: 16px;
+    background: $glass-bg;
+    border: 1px solid $glass-border;
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+
+    .l {
+        font-size: 12px;
+        color: $muted;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .v {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 26px;
+        font-weight: 500;
+        margin-top: 6px;
+        color: #e6e9f5;
+
+        small {
+            font-size: 14px;
+            color: $muted;
+        }
+    }
+
+    .d {
+        font-size: 12.5px;
+        color: $muted;
+        margin-top: 2px;
+    }
+}
+
+.vigie-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.vigie-chip {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    color: $muted;
+    background: $glass-bg;
+    border: 1px solid $glass-border;
+    cursor: pointer;
+
+    span {
+        font-family: "JetBrains Mono", monospace;
+        margin-left: 6px;
+        opacity: 0.7;
+    }
+
+    &.on {
+        color: #e6e9f5;
+        border-color: rgba(143, 163, 217, 0.45);
+        background: rgba(143, 163, 217, 0.15);
+    }
+}
+
+.vigie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.vigie-empty {
+    color: $muted;
+    padding: 20px 0;
+}
+
+.vigie-section {
+    font-size: 13px;
+    font-weight: 500;
+    color: $muted;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    margin: 8px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    &::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: $glass-border;
+    }
+}
+
+// Carte d'une sonde
+.vigie-card {
+    display: block;
+    padding: 16px 18px 14px;
+    border-radius: 16px;
+    background: $glass-bg;
+    border: 1px solid $glass-border;
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    color: #e6e9f5 !important;
+    text-decoration: none;
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        border-color: rgba(143, 163, 217, 0.4);
+    }
+
+    &.is-down {
+        border-color: rgba(224, 108, 117, 0.4);
+    }
+
+    &.is-paused {
+        opacity: 0.6;
+    }
+}
+
+.vigie-card-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.vigie-card-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    font-weight: 500;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid $glass-border;
+}
+
+.vigie-card-title {
+    min-width: 0;
+}
+
+.vigie-card-name {
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vigie-card-state {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: $muted;
+}
+
+.vigie-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: $muted;
+    flex-shrink: 0;
+
+    .is-up & {
+        background: $primary;
+    }
+    .is-down & {
+        background: $danger;
+    }
+    .is-pending & {
+        background: $warning;
+    }
+    .is-maintenance & {
+        background: $maintenance;
+    }
+}
+
+.vigie-card-uptime {
+    margin-left: auto;
+    text-align: right;
+
+    .value {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 15px;
+    }
+
+    .unit {
+        font-size: 11px;
+        color: $muted;
+    }
+}
+
+.vigie-card-passive {
+    height: 46px;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    font-size: 12.5px;
+    color: $muted;
+}
+
+.vigie-card .ping-sparkline {
+    height: 46px;
+    margin-top: 12px;
+}
+
+.vigie-beats {
+    display: flex;
+    gap: 2px;
+    height: 14px;
+    margin-top: 10px;
+
+    i {
+        flex: 1;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.07);
+
+        &.s1 {
+            background: $primary;
+            opacity: 0.8;
+        }
+        &.s0 {
+            background: $danger;
+        }
+        &.s2 {
+            background: $warning;
+        }
+        &.s3 {
+            background: $maintenance;
+        }
+    }
+}
+
+@media (max-width: 900px) {
+    .vigie-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .vigie-top-actions {
+        margin-left: 0;
+        width: 100%;
+
+        .vigie-search {
+            flex: 1;
+            width: auto;
+        }
+    }
+}
+
+// ============================================================
 // Page de statut : une carte par sonde (graphique + stats)
 // ============================================================
 

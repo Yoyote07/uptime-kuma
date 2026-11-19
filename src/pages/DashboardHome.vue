@@ -1,40 +1,75 @@
 <template>
     <transition ref="tableContainer" name="slide-fade" appear>
         <div v-if="$route.name === 'DashboardHome'">
-            <h1 class="mb-3">
-                {{ $t("Quick Stats") }}
-            </h1>
-
-            <div class="shadow-box big-padding text-center mb-3">
-                <div class="row">
-                    <div class="col">
-                        <h3>{{ $t("Up") }}</h3>
-                        <span class="num" :class="$root.stats.up === 0 && 'text-secondary'">
-                            {{ $root.stats.up }}
-                        </span>
-                    </div>
-                    <div class="col">
-                        <h3>{{ $t("Down") }}</h3>
-                        <span class="num" :class="$root.stats.down > 0 ? 'text-danger' : 'text-secondary'">
-                            {{ $root.stats.down }}
-                        </span>
-                    </div>
-                    <div class="col">
-                        <h3>{{ $t("Maintenance") }}</h3>
-                        <span class="num" :class="$root.stats.maintenance > 0 ? 'text-maintenance' : 'text-secondary'">
-                            {{ $root.stats.maintenance }}
-                        </span>
-                    </div>
-                    <div class="col">
-                        <h3>{{ $t("Unknown") }}</h3>
-                        <span class="num text-secondary">{{ $root.stats.unknown }}</span>
-                    </div>
-                    <div class="col">
-                        <h3>{{ $t("pauseDashboardHome") }}</h3>
-                        <span class="num text-secondary">{{ $root.stats.pause }}</span>
-                    </div>
+            <!-- ===== Vue d'ensemble Vigie ===== -->
+            <div class="vigie-top">
+                <div>
+                    <h1 class="vigie-h1">Vigie</h1>
+                    <div class="vigie-sub">Surveillance du homelab</div>
+                </div>
+                <span class="vigie-pill" :class="{ bad: $root.stats.down > 0 }">
+                    <b />
+                    {{
+                        $root.stats.down > 0
+                            ? `${$root.stats.down} sonde${$root.stats.down > 1 ? "s" : ""} en panne`
+                            : "Tout fonctionne"
+                    }}
+                </span>
+                <div class="vigie-top-actions">
+                    <input v-model="search" class="vigie-search" type="search" placeholder="Rechercher une sonde…" />
+                    <router-link to="/add" class="btn btn-primary">
+                        <font-awesome-icon icon="plus" />
+                        Nouvelle sonde
+                    </router-link>
                 </div>
             </div>
+
+            <div class="vigie-stats">
+                <div class="vigie-stat">
+                    <div class="l">En ligne</div>
+                    <div class="v">
+                        {{ $root.stats.up }} <small>/ {{ $root.stats.active }}</small>
+                    </div>
+                    <div class="d">sondes actives</div>
+                </div>
+                <div class="vigie-stat">
+                    <div class="l">Disponibilité 24 h</div>
+                    <div class="v">{{ averageUptime }} <small>%</small></div>
+                    <div class="d">moyenne de toutes les sondes</div>
+                </div>
+                <div class="vigie-stat">
+                    <div class="l">Temps de réponse</div>
+                    <div class="v">{{ averagePing }} <small>ms</small></div>
+                    <div class="d">moyenne sur 24 h</div>
+                </div>
+                <div class="vigie-stat">
+                    <div class="l">Pannes · pauses</div>
+                    <div class="v">
+                        {{ $root.stats.down }} <small>· {{ $root.stats.pause }}</small>
+                    </div>
+                    <div class="d">{{ $root.stats.maintenance }} en maintenance</div>
+                </div>
+            </div>
+
+            <div class="vigie-chips">
+                <button
+                    v-for="filter in filters"
+                    :key="filter.key"
+                    type="button"
+                    class="vigie-chip"
+                    :class="{ on: activeFilter === filter.key }"
+                    @click="activeFilter = filter.key"
+                >
+                    {{ filter.label }}<span>{{ filter.count }}</span>
+                </button>
+            </div>
+
+            <div class="vigie-grid">
+                <VigieMonitorCard v-for="monitor in filteredMonitors" :key="monitor.id" :monitor="monitor" />
+                <div v-if="filteredMonitors.length === 0" class="vigie-empty">Aucune sonde ne correspond.</div>
+            </div>
+
+            <h2 class="vigie-section">Événements importants</h2>
 
             <div class="shadow-box table-shadow-box table-wrapper">
                 <div class="mb-3 text-end">
@@ -117,6 +152,8 @@ import Status from "../components/Status.vue";
 import Datetime from "../components/Datetime.vue";
 import Pagination from "v-pagination-3";
 import Confirm from "../components/Confirm.vue";
+import VigieMonitorCard from "../components/VigieMonitorCard.vue";
+import { UP, DOWN } from "../util.ts";
 
 export default {
     components: {
@@ -124,6 +161,7 @@ export default {
         Status,
         Pagination,
         Confirm,
+        VigieMonitorCard,
     },
     props: {
         calculatedHeight: {
@@ -143,9 +181,66 @@ export default {
             importantHeartBeatListLength: 0,
             displayedRecords: [],
             clearingAllEvents: false,
+            search: "",
+            activeFilter: "all",
         };
     },
     computed: {
+        /**
+         * Sondes affichées en cartes (les groupes sont exclus, leurs sondes enfants sont affichées)
+         * @returns {object[]} sondes triées par nom
+         */
+        cardMonitors() {
+            return Object.values(this.$root.monitorList)
+                .filter((monitor) => monitor.type !== "group")
+                .sort((a, b) => a.name.localeCompare(b.name));
+        },
+
+        /**
+         * Filtres rapides avec leur compteur
+         * @returns {object[]} filtres
+         */
+        filters() {
+            const count = (key) => this.cardMonitors.filter((m) => this.matchesFilter(m, key)).length;
+            return [
+                { key: "all", label: "Toutes", count: count("all") },
+                { key: "up", label: "En ligne", count: count("up") },
+                { key: "down", label: "En panne", count: count("down") },
+                { key: "paused", label: "En pause", count: count("paused") },
+            ];
+        },
+
+        filteredMonitors() {
+            const query = this.search.trim().toLowerCase();
+            return this.cardMonitors.filter(
+                (monitor) =>
+                    this.matchesFilter(monitor, this.activeFilter) &&
+                    (!query || monitor.name.toLowerCase().includes(query))
+            );
+        },
+
+        averageUptime() {
+            const values = this.cardMonitors
+                .filter((monitor) => monitor.active)
+                .map((monitor) => this.$root.uptimeList[`${monitor.id}_24`])
+                .filter((value) => typeof value === "number");
+            if (values.length === 0) {
+                return "–";
+            }
+            const average = (values.reduce((a, b) => a + b, 0) / values.length) * 100;
+            return average.toFixed(2).replace(".", ",");
+        },
+
+        averagePing() {
+            const values = this.cardMonitors
+                .map((monitor) => this.$root.avgPingList[monitor.id])
+                .filter((value) => typeof value === "number" && value > 0);
+            if (values.length === 0) {
+                return "–";
+            }
+            return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+        },
+
         showGroupColumn() {
             return Object.values(this.$root.monitorList).some((m) => m.parent != null);
         },
@@ -183,6 +278,26 @@ export default {
     },
 
     methods: {
+        /**
+         * La sonde correspond-elle au filtre rapide ?
+         * @param {object} monitor sonde
+         * @param {string} key all | up | down | paused
+         * @returns {boolean} vrai si elle doit être affichée
+         */
+        matchesFilter(monitor, key) {
+            if (key === "all") {
+                return true;
+            }
+            if (key === "paused") {
+                return !monitor.active;
+            }
+            const last = this.$root.lastHeartbeatList[monitor.id];
+            if (!monitor.active || !last) {
+                return false;
+            }
+            return key === "up" ? last.status === UP : last.status === DOWN;
+        },
+
         /**
          * Returns the group (parent) name for a monitor, or empty string if none.
          * @param {number} monitorID - The monitor ID.
