@@ -31,9 +31,13 @@ import { UP, DOWN, PENDING, MAINTENANCE } from "../util.ts";
 
 const BEATS_SHOWN = 40;
 
-// Seuils de vitesse (moyenne des 5 dernières mesures)
-const SLOW_MS = 100;
-const VERY_SLOW_MS = 300;
+// Seuils de vitesse en ms (moyenne des 5 dernières mesures).
+// Les sondes Push reçoivent un ping mesuré vers Internet (ex. latence Discord
+// d'un bot), donc des seuils plus larges que pour les services du réseau local.
+const SPEED_THRESHOLDS = {
+    default: { slow: 100, verySlow: 300 },
+    push: { slow: 300, verySlow: 600 },
+};
 
 const SPEED_COLORS = {
     fast: "#6fbfa3",
@@ -150,10 +154,11 @@ export default {
                 return "fast";
             }
             const average = recent.reduce((a, b) => a + b, 0) / recent.length;
-            if (average >= VERY_SLOW_MS) {
+            const limits = SPEED_THRESHOLDS[this.monitor.type] || SPEED_THRESHOLDS.default;
+            if (average >= limits.verySlow) {
                 return "very-slow";
             }
-            return average >= SLOW_MS ? "slow" : "fast";
+            return average >= limits.slow ? "slow" : "fast";
         },
 
         pingText() {
