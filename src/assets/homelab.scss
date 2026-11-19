@@ -35,6 +35,11 @@ $muted: #8b93ad;
     display: none;
 }
 
+// Le conteneur de thème de Kuma (div.dark) peignait un fond uni par-dessus l'Aurora
+#app .dark {
+    background-color: transparent !important;
+}
+
 body.dark {
     background-color: $aurora-bg;
     color: $dark-font-color;
@@ -295,7 +300,8 @@ body.dark .bottom-nav {
 // ============================================================
 
 .vigie-content {
-    max-width: 1500px;
+    max-width: 1700px;
+    margin: 0 auto;
 }
 
 .vigie-top {
@@ -448,8 +454,8 @@ body.dark .bottom-nav {
 
 .vigie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
     margin-bottom: 30px;
 }
 
@@ -480,7 +486,7 @@ body.dark .bottom-nav {
 // Carte d'une sonde
 .vigie-card {
     display: block;
-    padding: 16px 18px 14px;
+    padding: 20px 22px 18px;
     border-radius: 16px;
     background: $glass-bg;
     border: 1px solid $glass-border;
@@ -585,8 +591,8 @@ body.dark .bottom-nav {
 
 // Historique (sondes sans temps de réponse) : même hauteur que le graphique
 .vigie-card > .vigie-beats {
-    height: 46px;
-    margin-top: 12px;
+    height: 70px;
+    margin-top: 16px;
     align-items: center;
 
     i {
@@ -604,8 +610,8 @@ body.dark .bottom-nav {
 }
 
 .vigie-card .ping-sparkline {
-    height: 46px;
-    margin-top: 12px;
+    height: 70px;
+    margin-top: 16px;
 }
 
 .vigie-beats {
