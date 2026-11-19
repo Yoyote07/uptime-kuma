@@ -14,7 +14,7 @@
 
         <!-- Barre latérale (bureau) — thème homelab « Vigie » -->
         <aside v-if="!$root.isMobile && $root.loggedIn" class="vigie-side">
-            <router-link to="/dashboard" class="vigie-logo" title="Vigie">
+            <router-link to="/dashboard" class="vigie-logo" title="Sentinelle">
                 <font-awesome-icon icon="heartbeat" />
             </router-link>
 
@@ -65,7 +65,7 @@
         <header v-if="$root.isMobile" class="vigie-mobile-header">
             <router-link to="/dashboard" class="vigie-brand">
                 <font-awesome-icon icon="heartbeat" />
-                <span>Vigie</span>
+                <span>Sentinelle</span>
             </router-link>
         </header>
 

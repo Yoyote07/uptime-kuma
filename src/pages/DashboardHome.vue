@@ -4,7 +4,7 @@
             <!-- ===== Vue d'ensemble Vigie ===== -->
             <div class="vigie-top">
                 <div>
-                    <h1 class="vigie-h1">Vigie</h1>
+                    <h1 class="vigie-h1">Sentinelle</h1>
                     <div class="vigie-sub">
                         {{ $root.stats.up }} / {{ $root.stats.active }} en ligne · {{ averageUptime }} % sur 24 h ·
                         {{ averagePing }} ms

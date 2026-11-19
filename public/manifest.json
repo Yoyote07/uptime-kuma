@@ -1,10 +1,10 @@
 {
-    "name": "Uptime Kuma",
-    "short_name": "Uptime Kuma",
-    "description": "An easy-to-use self-hosted monitoring tool.",
-    "theme_color": "#5cdd8b",
+    "name": "Sentinelle",
+    "short_name": "Sentinelle",
+    "description": "Surveillance du homelab",
+    "theme_color": "#070b18",
     "start_url": "/",
-    "background_color": "#fff",
+    "background_color": "#070b18",
     "display": "standalone",
     "icons": [
         {
