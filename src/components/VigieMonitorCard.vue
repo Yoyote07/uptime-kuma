@@ -17,7 +17,7 @@
         </div>
 
         <!-- Un seul visuel : le graphique si la sonde mesure un temps de réponse, sinon l'historique -->
-        <PingSparkline v-if="hasPing" :monitor-id="monitor.id" :show-value="false" :smooth="true" />
+        <PingSparkline v-if="hasPing" :monitor-id="monitor.id" :show-value="false" :smooth="true" :color="stateColor" />
         <div v-else class="vigie-beats">
             <i v-for="n in emptyBeats" :key="`e${n}`" class="empty" />
             <i v-for="(beat, index) in recentBeats" :key="index" :class="`s${beat.status}`" />
@@ -30,6 +30,15 @@ import PingSparkline from "./PingSparkline.vue";
 import { UP, DOWN, PENDING, MAINTENANCE } from "../util.ts";
 
 const BEATS_SHOWN = 40;
+
+const STATE_COLORS = {
+    up: "#6fbfa3",
+    down: "#e06c75",
+    pending: "#d9b46c",
+    maintenance: "#8fa3d9",
+    paused: "#8b93ad",
+    unknown: "#8b93ad",
+};
 
 const TYPE_LABELS = {
     http: "HTTP",
@@ -105,6 +114,14 @@ export default {
                 default:
                     return { key: "unknown", label: "Inconnu" };
             }
+        },
+
+        /**
+         * Couleur de la courbe selon l'état : vert si tout va bien, rouge en panne…
+         * @returns {string} couleur hexadécimale
+         */
+        stateColor() {
+            return STATE_COLORS[this.state.key] || STATE_COLORS.unknown;
         },
 
         pingText() {

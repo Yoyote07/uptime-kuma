@@ -4,15 +4,15 @@
         <svg :viewBox="`0 0 ${width} ${height}`" preserveAspectRatio="none" aria-hidden="true">
             <defs>
                 <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#8fa3d9" stop-opacity="0.28" />
-                    <stop offset="1" stop-color="#8fa3d9" stop-opacity="0" />
+                    <stop offset="0" :stop-color="color" stop-opacity="0.28" />
+                    <stop offset="1" :stop-color="color" stop-opacity="0" />
                 </linearGradient>
             </defs>
             <path :d="areaPath" :fill="`url(#${gradientId})`" />
             <path
                 :d="linePath"
                 fill="none"
-                stroke="#8fa3d9"
+                :stroke="color"
                 stroke-width="1.5"
                 stroke-linejoin="round"
                 vector-effect="non-scaling-stroke"
@@ -34,6 +34,11 @@ export default {
         maxPoints: {
             type: Number,
             default: 60,
+        },
+        /** Couleur de la courbe (bleu-gris par défaut) */
+        color: {
+            type: String,
+            default: "#8fa3d9",
         },
         /** Afficher la dernière valeur en ms */
         showValue: {
