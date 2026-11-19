@@ -114,6 +114,7 @@
                                                     />
                                                 </div>
                                             </div>
+                                            <PingSparkline :monitor-id="monitor.element.id" />
                                         </div>
                                         <div :key="$root.userHeartbeatBar" class="col-3 col-xl-6">
                                             <HeartbeatBar size="mid" :monitor-id="monitor.element.id" />
@@ -137,6 +138,7 @@ import HeartbeatBar from "./HeartbeatBar.vue";
 import Uptime from "./Uptime.vue";
 import Tag from "./Tag.vue";
 import Status from "./Status.vue";
+import PingSparkline from "./PingSparkline.vue";
 
 export default {
     components: {
@@ -146,6 +148,7 @@ export default {
         Uptime,
         Tag,
         Status,
+        PingSparkline,
     },
     props: {
         /** Are we in edit mode? */

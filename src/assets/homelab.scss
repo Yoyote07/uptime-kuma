@@ -1,0 +1,148 @@
+// ============================================================
+// Thème homelab « Aurora » — même style que Homepage
+// Fond bleu nuit animé, cartes en verre dépoli, polices Outfit / JetBrains Mono
+// ============================================================
+
+$aurora-bg: #070b18;
+$glass-bg: rgba(17, 24, 45, 0.55);
+$glass-border: rgba(255, 255, 255, 0.08);
+$accent: #8fa3d9;
+$muted: #8b93ad;
+
+#app {
+    font-family:
+        "Outfit",
+        "Twemoji Country Flags",
+        system-ui,
+        sans-serif,
+        apple color emoji,
+        segoe ui emoji,
+        noto color emoji;
+}
+
+.badge,
+.uptime,
+.ping-value {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+}
+
+// Pas de barre de défilement visible (le défilement reste possible)
+* {
+    scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+    display: none;
+}
+
+body.dark {
+    background-color: $aurora-bg;
+    color: $dark-font-color;
+
+    // Taches de couleur floues qui bougent lentement
+    &::before,
+    &::after {
+        content: "";
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(120px);
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.28;
+        animation: homelab-aurora 55s ease-in-out infinite alternate;
+    }
+    &::before {
+        width: 55vw;
+        height: 55vw;
+        top: -20vw;
+        left: -10vw;
+        background: #3b4a7a;
+    }
+    &::after {
+        width: 45vw;
+        height: 45vw;
+        bottom: -18vw;
+        right: -8vw;
+        background: #2c4f5c;
+        animation-duration: 65s;
+        animation-delay: -15s;
+    }
+
+    // En-tête en verre
+    header {
+        background-color: rgba(12, 18, 34, 0.6) !important;
+        border-bottom-color: $glass-border !important;
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+    }
+
+    // Cartes en verre dépoli
+    .shadow-box:not(.alert) {
+        background-color: $glass-bg;
+        border: 1px solid $glass-border;
+        border-radius: 16px;
+        box-shadow: none;
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+    }
+
+    // Lignes des sondes
+    .monitor-list .item {
+        border-radius: 12px;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        &.active {
+            background-color: rgba(143, 163, 217, 0.12);
+        }
+    }
+
+    // Boutons principaux : sobres, teintés
+    .btn-primary {
+        background-color: rgba(143, 163, 217, 0.15);
+        border: 1px solid rgba(143, 163, 217, 0.35);
+        color: #dfe5f7;
+
+        &:hover,
+        &:focus {
+            background-color: rgba(143, 163, 217, 0.25);
+            border-color: rgba(143, 163, 217, 0.5);
+            color: #fff;
+        }
+    }
+
+    // Champs de formulaire
+    .form-control,
+    .form-select {
+        background-color: rgba(10, 15, 30, 0.7);
+        border-color: $glass-border;
+    }
+
+    // Textes secondaires
+    .word,
+    .text-secondary {
+        color: $muted !important;
+    }
+}
+
+@keyframes homelab-aurora {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: translate(8vw, 6vh) scale(1.12);
+    }
+    100% {
+        transform: translate(-6vw, -4vh) scale(0.95);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.dark::before,
+    body.dark::after {
+        animation: none;
+    }
+}

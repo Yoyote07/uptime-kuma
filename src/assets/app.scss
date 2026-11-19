@@ -674,3 +674,6 @@ $shadow-box-padding: 20px;
 // Localization
 
 @import "localization.scss";
+
+// Thème homelab (Aurora) — doit rester en dernier
+@import "homelab.scss";
