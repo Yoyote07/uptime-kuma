@@ -1395,3 +1395,60 @@ body.dark .shadow-box.sentinelle-list {
         }
     }
 }
+
+// ============================================================
+// Formulaire de sonde : options avancées repliées
+// ============================================================
+
+.sentinelle-simple .adv-marker ~ * {
+    display: none !important;
+}
+
+.sentinelle-adv-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    width: 100%;
+    margin: 18px 0 8px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px dashed rgba(143, 163, 217, 0.35);
+    background: rgba(143, 163, 217, 0.06);
+    text-align: left;
+    color: #e6e9f5;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background: rgba(143, 163, 217, 0.12);
+    }
+
+    .t {
+        font-size: 15px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .d {
+        font-size: 12.5px;
+        color: $muted;
+    }
+}
+
+// Barre « Sauvegarder » : opaque, bouton à droite, ne recouvre plus le texte
+body.dark .fixed-bottom-bar.sentinelle-save-bar,
+body.dark .fixed-bottom-bar {
+    background: #0c1222 !important;
+    backdrop-filter: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 28px;
+    box-shadow: 0 -12px 24px -12px rgba(0, 0, 0, 0.6);
+
+    .btn {
+        min-width: 160px;
+    }
+}

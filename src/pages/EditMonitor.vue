@@ -2,8 +2,12 @@
     <transition name="slide-fade" appear>
         <div>
             <h1 class="mb-3">{{ pageName }}</h1>
-            <form @submit.prevent="submit">
-                <div class="shadow-box shadow-box-with-fixed-bottom-bar">
+            <!-- Si un champ obligatoire est caché dans « Avancé », on déplie la section -->
+            <form @submit.prevent="submit" @invalid.capture="showAdvanced = true">
+                <div
+                    class="shadow-box shadow-box-with-fixed-bottom-bar"
+                    :class="{ 'sentinelle-simple': !showAdvanced }"
+                >
                     <div class="row">
                         <div class="col-md-6">
                             <h2 class="mb-2">{{ $t("General") }}</h2>
@@ -1599,6 +1603,23 @@
                                 </div>
                             </div>
 
+                            <!-- Sentinelle : le reste du formulaire est replié par défaut -->
+                            <button
+                                type="button"
+                                class="sentinelle-adv-toggle"
+                                :aria-expanded="showAdvanced"
+                                @click="showAdvanced = !showAdvanced"
+                            >
+                                <span class="t">
+                                    <font-awesome-icon :icon="showAdvanced ? 'chevron-up' : 'chevron-down'" />
+                                    {{ showAdvanced ? "Masquer les options avancées" : "Options avancées" }}
+                                </span>
+                                <span class="d">
+                                    Tentatives, délais, renvoi des alertes, méthode HTTP, corps, en-têtes,
+                                    authentification, proxy, groupe, étiquettes…
+                                </span>
+                            </button>
+                            <div class="adv-marker"></div>
                             <div class="my-3">
                                 <label for="maxRetries" class="form-label">{{ $t("Retries") }}</label>
                                 <input
@@ -2264,6 +2285,7 @@
                             <button class="btn btn-primary me-2" type="button" @click="$refs.notificationDialog.show()">
                                 {{ $t("Setup Notification") }}
                             </button>
+                            <div class="adv-marker"></div>
 
                             <!-- WebSocket Authentication -->
                             <template v-if="monitor.type === 'websocket-upgrade'">
@@ -3228,7 +3250,7 @@
                         </div>
                     </div>
 
-                    <div class="fixed-bottom-bar p-3">
+                    <div class="fixed-bottom-bar sentinelle-save-bar p-3">
                         <button
                             id="monitor-submit-btn"
                             class="btn btn-primary"
@@ -3385,6 +3407,7 @@ export default {
 
     data() {
         return {
+            showAdvanced: false,
             minInterval: MIN_INTERVAL_SECOND,
             pingPerRequestTimeoutMax: PING_PER_REQUEST_TIMEOUT_MAX,
             processing: false,
