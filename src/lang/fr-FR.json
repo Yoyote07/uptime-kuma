@@ -24,7 +24,7 @@
     "affectedStatusPages": "Afficher ce message de maintenance sur les pages d'état sélectionnées",
     "atLeastOneMonitor": "Sélectionnez au moins une sonde concernée",
     "passwordNotMatchMsg": "Les mots de passe ne correspondent pas.",
-    "notificationDescription": "Une fois ajoutée, vous devez l'activer manuellement dans les paramètres de vos hôtes.",
+    "notificationDescription": "Une fois créée, une alerte doit être cochée sur chaque sonde concernée (dans le formulaire de la sonde), sauf si elle est « par défaut ».",
     "keywordDescription": "Le mot clé sera recherché dans la réponse HTML/JSON reçue du site internet.",
     "pauseDashboardHome": "En pause",
     "deleteMonitorMsg": "Êtes-vous sûr de vouloir supprimer cette sonde ?",

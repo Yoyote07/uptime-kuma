@@ -1,18 +1,19 @@
 <template>
     <transition name="slide-fade" appear>
-        <div>
-            <h1 class="mb-3">
-                {{ $t("Status Pages") }}
-            </h1>
-
-            <div>
-                <router-link to="/add-status-page" class="btn btn-primary mb-3">
-                    <font-awesome-icon icon="plus" />
-                    {{ $t("New Status Page") }}
-                </router-link>
+        <div class="sentinelle-page">
+            <div class="vigie-top">
+                <div>
+                    <h1 class="vigie-h1">Pages de statut</h1>
+                    <div class="vigie-sub">Pages publiques qui montrent l'état de tes services</div>
+                </div>
+                <div class="vigie-top-actions">
+                    <router-link to="/add-status-page" class="btn btn-primary">
+                        <font-awesome-icon icon="plus" />
+                        Nouvelle page de statut
+                    </router-link>
+                </div>
             </div>
-
-            <div class="shadow-box">
+            <div class="shadow-box sentinelle-list">
                 <template v-if="$root.statusPageListLoaded">
                     <span
                         v-if="Object.keys($root.statusPageList).length === 0"

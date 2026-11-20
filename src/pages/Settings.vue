@@ -11,44 +11,56 @@
             </router-link>
         </div>
 
-        <h1 v-show="show" class="mb-3">
-            {{ $t("Settings") }}
-        </h1>
-
-        <div class="shadow-box shadow-box-settings">
-            <div class="row">
-                <div v-if="showSubMenu" class="settings-menu col-lg-3 col-md-5">
-                    <router-link v-for="(item, key) in subMenus" :key="key" :to="`/settings/${key}`">
-                        <div class="menu-item">
-                            {{ item.title }}
-                        </div>
-                    </router-link>
-
-                    <!-- Logout Button -->
-                    <a
-                        v-if="$root.isMobile && $root.loggedIn && $root.socket.token !== 'autoLogin'"
-                        class="logout"
-                        @click.prevent="$root.logout"
-                    >
-                        <div class="menu-item">
-                            <font-awesome-icon icon="sign-out-alt" />
-                            {{ $t("Logout") }}
-                        </div>
-                    </a>
-                </div>
-                <div class="settings-content col-lg-9 col-md-7">
-                    <div v-if="currentPage" class="settings-content-header">
-                        {{ subMenus[currentPage].title }}
-                    </div>
-                    <div class="mx-3">
-                        <router-view v-slot="{ Component }">
-                            <transition name="slide-fade" appear>
-                                <component :is="Component" />
-                            </transition>
-                        </router-view>
-                    </div>
-                </div>
+        <div class="vigie-top">
+            <div>
+                <h1 class="vigie-h1">Paramètres</h1>
+                <div class="vigie-sub">Réglages de Sentinelle</div>
             </div>
+        </div>
+
+        <div class="sentinelle-settings" :class="{ 'has-page': !!currentPage }">
+            <nav v-if="showSubMenu" class="sentinelle-settings-menu">
+                <router-link
+                    v-for="key in mainKeys"
+                    :key="key"
+                    :to="`/settings/${key}`"
+                    class="sentinelle-settings-item"
+                >
+                    {{ subMenus[key].title }}
+                </router-link>
+
+                <button
+                    type="button"
+                    class="sentinelle-settings-group"
+                    :aria-expanded="advancedOpen"
+                    @click="advancedOpen = !advancedOpen"
+                >
+                    <span>Avancé</span>
+                    <font-awesome-icon :icon="advancedOpen ? 'chevron-up' : 'chevron-down'" />
+                </button>
+                <template v-if="advancedOpen">
+                    <router-link
+                        v-for="key in advancedKeys"
+                        :key="key"
+                        :to="`/settings/${key}`"
+                        class="sentinelle-settings-item sub"
+                    >
+                        {{ subMenus[key].title }}
+                    </router-link>
+                </template>
+
+                <router-link to="/settings/about" class="sentinelle-settings-item about">À propos</router-link>
+            </nav>
+
+            <section v-if="currentPage" class="sentinelle-settings-content">
+                <router-link v-if="$root.isMobile" to="/settings" class="vigie-back">← Paramètres</router-link>
+                <h2 class="sentinelle-settings-title">{{ subMenus[currentPage]?.title }}</h2>
+                <router-view v-slot="{ Component }">
+                    <transition name="slide-fade" appear>
+                        <component :is="Component" />
+                    </transition>
+                </router-view>
+            </section>
         </div>
     </div>
 </template>
@@ -59,6 +71,7 @@ import { useRoute } from "vue-router";
 export default {
     data() {
         return {
+            advancedOpen: false,
             show: true,
             settings: {},
             settingsLoaded: false,
@@ -85,43 +98,29 @@ export default {
 
         subMenus() {
             return {
-                general: {
-                    title: this.$t("General"),
-                },
-                appearance: {
-                    title: this.$t("Appearance"),
-                },
-                notifications: {
-                    title: "Messages et expirations",
-                },
-                "reverse-proxy": {
-                    title: this.$t("Reverse Proxy"),
-                },
-                tags: {
-                    title: this.$t("Tags"),
-                },
-                "monitor-history": {
-                    title: this.$t("Monitor History"),
-                },
-                "docker-hosts": {
-                    title: this.$t("Docker Hosts"),
-                },
-                "remote-browsers": {
-                    title: this.$t("Remote Browsers"),
-                },
-                security: {
-                    title: this.$t("Security"),
-                },
-                "api-keys": {
-                    title: this.$t("API Keys"),
-                },
-                proxies: {
-                    title: this.$t("Proxies"),
-                },
-                about: {
-                    title: this.$t("About"),
-                },
+                general: { title: "Général" },
+                appearance: { title: "Apparence" },
+                security: { title: "Sécurité" },
+                notifications: { title: "Messages et expirations" },
+                tags: { title: "Étiquettes" },
+                "monitor-history": { title: "Historique des sondes" },
+                "reverse-proxy": { title: "Proxy inverse" },
+                "docker-hosts": { title: "Hôtes Docker" },
+                "remote-browsers": { title: "Navigateurs distants" },
+                "api-keys": { title: "Clés API" },
+                proxies: { title: "Proxys" },
+                about: { title: "À propos" },
             };
+        },
+
+        /** Rubriques affichées directement */
+        mainKeys() {
+            return ["general", "appearance", "security", "notifications", "tags", "monitor-history"];
+        },
+
+        /** Rubriques peu utilisées, regroupées sous « Avancé » */
+        advancedKeys() {
+            return ["reverse-proxy", "docker-hosts", "remote-browsers", "api-keys", "proxies"];
         },
     },
 
@@ -134,6 +133,7 @@ export default {
     mounted() {
         this.loadSettings();
         this.loadGeneralPage();
+        this.advancedOpen = this.advancedKeys.includes(this.currentPage);
     },
 
     methods: {
@@ -244,79 +244,107 @@ export default {
 <style lang="scss" scoped>
 @import "../assets/vars.scss";
 
-.shadow-box-settings {
-    padding: 20px;
-    min-height: calc(100vh - 155px);
+.sentinelle-settings {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
 }
 
-footer {
-    color: $secondary-text;
-    font-size: 13px;
-    margin-top: 20px;
-    padding-bottom: 30px;
-    text-align: center;
+.sentinelle-settings-menu,
+.sentinelle-settings-content {
+    border-radius: 16px;
+    background: rgba(17, 24, 45, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 
-.settings-menu {
-    a {
-        text-decoration: none !important;
-    }
-
-    .menu-item {
-        border-radius: 10px;
-        margin: 0.5em;
-        padding: 0.7em 1em;
-        cursor: pointer;
-        border-left-width: 0;
-        transition: all ease-in-out 0.1s;
-    }
-
-    .menu-item:hover {
-        background: $highlight-white;
-
-        .dark & {
-            background: $dark-header-bg;
-        }
-    }
-
-    .active .menu-item {
-        background: $highlight-white;
-        border-left: 4px solid $primary;
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-
-        .dark & {
-            background: $dark-header-bg;
-        }
-    }
+.sentinelle-settings-menu {
+    position: sticky;
+    top: 100px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-.settings-content {
-    .settings-content-header {
-        width: calc(100% + 20px);
-        border-bottom: 1px solid #dee2e6;
-        border-radius: 0 10px 0 0;
-        margin-top: -20px;
-        margin-right: -20px;
-        padding: 12.5px 1em;
-        font-size: 26px;
+.sentinelle-settings-item {
+    display: block;
+    padding: 9px 14px;
+    border-radius: 11px;
+    font-size: 14.5px;
+    color: #8b93ad !important;
+    text-decoration: none;
 
-        .dark & {
-            background: $dark-header-bg;
-            border-bottom: 0;
-        }
+    &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #e6e9f5 !important;
+    }
 
-        .mobile & {
-            padding: 15px 0 0 0;
+    &.router-link-active {
+        background: rgba(143, 163, 217, 0.15);
+        color: #e6e9f5 !important;
+        box-shadow: inset 3px 0 0 #8fa3d9;
+    }
 
-            .dark & {
-                background-color: transparent;
-            }
-        }
+    &.sub {
+        padding-left: 26px;
+        font-size: 14px;
+    }
+
+    &.about {
+        margin-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 0 0 11px 11px;
+        padding-top: 12px;
     }
 }
 
-.logout {
-    color: $danger !important;
+.sentinelle-settings-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 9px 14px;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: transparent;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #8b93ad;
+
+    &:hover {
+        color: #e6e9f5;
+    }
+}
+
+.sentinelle-settings-content {
+    padding: 22px 26px 26px;
+    min-width: 0;
+}
+
+.sentinelle-settings-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+// Téléphone : le menu seul, puis la page choisie seule
+@media (max-width: 900px) {
+    .sentinelle-settings {
+        grid-template-columns: 1fr;
+    }
+
+    .sentinelle-settings-menu {
+        position: static;
+    }
+
+    .sentinelle-settings-content {
+        padding: 16px;
+    }
 }
 </style>

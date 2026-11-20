@@ -41,6 +41,7 @@ import {
     faAward,
     faLink,
     faChevronDown,
+    faChevronUp,
     faSignOutAlt,
     faPen,
     faExternalLinkSquareAlt,

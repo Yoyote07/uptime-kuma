@@ -1,18 +1,19 @@
 <template>
     <transition name="slide-fade" appear>
-        <div>
-            <h1 class="mb-3">
-                {{ $t("Maintenance") }}
-            </h1>
-
-            <div>
-                <router-link to="/add-maintenance" class="btn btn-primary mb-3">
-                    <font-awesome-icon icon="plus" />
-                    {{ $t("Schedule Maintenance") }}
-                </router-link>
+        <div class="sentinelle-page">
+            <div class="vigie-top">
+                <div>
+                    <h1 class="vigie-h1">Maintenance</h1>
+                    <div class="vigie-sub">Périodes pendant lesquelles les pannes ne déclenchent pas d'alerte</div>
+                </div>
+                <div class="vigie-top-actions">
+                    <router-link to="/add-maintenance" class="btn btn-primary">
+                        <font-awesome-icon icon="plus" />
+                        Planifier une maintenance
+                    </router-link>
+                </div>
             </div>
-
-            <div class="shadow-box">
+            <div class="shadow-box sentinelle-list">
                 <span
                     v-if="Object.keys(sortedMaintenanceList).length === 0"
                     class="d-flex align-items-center justify-content-center my-3"
