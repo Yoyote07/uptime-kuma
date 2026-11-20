@@ -3,7 +3,9 @@ name: Build homelab image
 
 on:
   push:
-    branches: [homelab]
+    # homelab : construit ET publie l'image
+    # build-test : construit seulement, pour vérifier que ça compile avant homelab
+    branches: [homelab, build-test]
   workflow_dispatch:
 
 permissions:
@@ -42,7 +44,7 @@ jobs:
           file: docker/dockerfile
           target: release
           platforms: linux/amd64
-          push: true
+          push: ${{ github.ref == 'refs/heads/homelab' }}
           tags: |
             ghcr.io/yoyote07/uptime-kuma:homelab
             ghcr.io/yoyote07/uptime-kuma:homelab-${{ github.sha }}
