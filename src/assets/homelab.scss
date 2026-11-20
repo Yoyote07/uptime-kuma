@@ -1452,3 +1452,108 @@ body.dark .fixed-bottom-bar {
         min-width: 160px;
     }
 }
+
+// ============================================================
+// Vue d'ensemble : événements importants (compact)
+// ============================================================
+
+.vigie-events {
+    margin-top: 6px;
+}
+
+.vigie-events-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+
+    .vigie-section {
+        flex: 1;
+        margin: 0;
+    }
+}
+
+.vigie-events-empty {
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-size: 14px;
+    color: $muted;
+    background: rgba(17, 24, 45, 0.35);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.vigie-events-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    border-radius: 14px;
+    background: $glass-bg;
+    border: 1px solid $glass-border;
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+
+    li {
+        display: grid;
+        grid-template-columns: 10px minmax(110px, 1.2fr) 90px 150px minmax(0, 2fr);
+        align-items: center;
+        gap: 12px;
+        padding: 8px 16px;
+        font-size: 13.5px;
+        border-top: 1px solid $glass-border;
+
+        &:first-child {
+            border-top: none;
+        }
+
+        &.s1 .vigie-dot {
+            background: $primary;
+        }
+        &.s0 .vigie-dot {
+            background: $danger;
+        }
+        &.s2 .vigie-dot {
+            background: $warning;
+        }
+        &.s3 .vigie-dot {
+            background: $maintenance;
+        }
+    }
+
+    .ev-name {
+        color: #e6e9f5 !important;
+        text-decoration: none;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ev-state,
+    .ev-time {
+        color: $muted;
+        white-space: nowrap;
+    }
+
+    .ev-time {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+    }
+
+    .ev-msg {
+        color: $muted;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@media (max-width: 900px) {
+    .vigie-events-list li {
+        grid-template-columns: 10px 1fr auto;
+
+        .ev-time,
+        .ev-msg {
+            grid-column: 2 / -1;
+        }
+    }
+}

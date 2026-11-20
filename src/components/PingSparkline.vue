@@ -18,11 +18,13 @@
                 vector-effect="non-scaling-stroke"
             />
         </svg>
-        <span v-if="showValue" class="ping-value">{{ lastPing }} ms</span>
+        <span v-if="showValue" class="ping-value">{{ lastPing }}</span>
     </div>
 </template>
 
 <script>
+import { formatMs } from "../sentinelle-format.js";
+
 export default {
     props: {
         /** ID de la sonde dont on affiche le temps de réponse */
@@ -83,7 +85,7 @@ export default {
         },
 
         lastPing() {
-            return Math.round(this.points[this.points.length - 1]);
+            return formatMs(this.points[this.points.length - 1]);
         },
 
         coordinates() {

@@ -6,8 +6,8 @@
                 <div>
                     <h1 class="vigie-h1">Vue d'ensemble</h1>
                     <div class="vigie-sub">
-                        {{ $root.stats.up }} / {{ $root.stats.active }} en ligne · {{ averageUptime }} % sur 24 h ·
-                        {{ averagePing }} ms
+                        {{ $root.stats.up }} / {{ $root.stats.active }} en ligne · {{ averageUptime }} sur 24 h ·
+                        {{ averagePing }} de temps de réponse moyen
                     </div>
                 </div>
                 <span class="vigie-pill" :class="{ bad: $root.stats.down > 0 }">
@@ -32,62 +32,36 @@
                 <div v-if="filteredMonitors.length === 0" class="vigie-empty">Aucune sonde ne correspond.</div>
             </div>
 
-            <h2 v-if="importantHeartBeatListLength > 0" class="vigie-section">Événements importants</h2>
-
-            <div v-if="importantHeartBeatListLength > 0" class="shadow-box table-shadow-box table-wrapper">
-                <div class="mb-3 text-end">
+            <section class="vigie-events">
+                <div class="vigie-events-head">
+                    <h2 class="vigie-section">Événements importants</h2>
                     <button
+                        v-if="importantHeartBeatListLength > 0"
                         class="btn btn-sm btn-outline-danger"
                         :disabled="clearingAllEvents"
                         @click="clearAllEventsDialog"
                     >
-                        {{ $t("Clear All Events") }}
+                        Tout effacer
                     </button>
                 </div>
-                <table class="table table-borderless table-hover">
-                    <thead>
-                        <tr>
-                            <th v-if="showGroupColumn">{{ $t("Group Name") }}</th>
-                            <th class="name-column">{{ $t("Name") }}</th>
-                            <th>{{ $t("Status") }}</th>
-                            <th>{{ $t("DateTime") }}</th>
-                            <th>{{ $t("Message") }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="(beat, index) in displayedRecords"
-                            :key="index"
-                            :class="{ 'shadow-box': $root.windowWidth <= 550 }"
-                        >
-                            <td v-if="showGroupColumn">
-                                <router-link
-                                    v-if="getGroupName(beat.monitorID)"
-                                    :to="`/dashboard/${getGroupId(beat.monitorID)}`"
-                                >
-                                    {{ getGroupName(beat.monitorID) }}
-                                </router-link>
-                                <span v-else class="text-secondary">—</span>
-                            </td>
-                            <td class="name-column">
-                                <router-link :to="`/dashboard/${beat.monitorID}`">
-                                    {{ $root.monitorList[beat.monitorID]?.name }}
-                                </router-link>
-                            </td>
-                            <td><Status :status="beat.status" /></td>
-                            <td :class="{ 'border-0': !beat.msg }"><Datetime :value="beat.time" /></td>
-                            <td class="border-0">{{ beat.msg }}</td>
-                        </tr>
 
-                        <tr v-if="importantHeartBeatListLength === 0">
-                            <td :colspan="tableColumnCount">
-                                {{ $t("No important events") }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div v-if="importantHeartBeatListLength === 0" class="vigie-events-empty">
+                    Aucun événement important : rien n'est tombé récemment.
+                </div>
 
-                <div class="d-flex justify-content-center kuma_pagination">
+                <ul v-else class="vigie-events-list">
+                    <li v-for="(beat, index) in displayedRecords" :key="index" :class="`s${beat.status}`">
+                        <span class="vigie-dot" />
+                        <router-link :to="`/dashboard/${beat.monitorID}`" class="ev-name">
+                            {{ $root.monitorList[beat.monitorID]?.name }}
+                        </router-link>
+                        <span class="ev-state">{{ eventLabel(beat.status) }}</span>
+                        <span class="ev-time"><Datetime :value="beat.time" /></span>
+                        <span class="ev-msg" :title="beat.msg">{{ beat.msg }}</span>
+                    </li>
+                </ul>
+
+                <div v-if="importantHeartBeatListLength > perPage" class="d-flex justify-content-center kuma_pagination">
                     <pagination
                         v-model="page"
                         :records="importantHeartBeatListLength"
@@ -95,7 +69,7 @@
                         :options="paginationConfig"
                     />
                 </div>
-            </div>
+            </section>
         </div>
     </transition>
     <Confirm
@@ -116,7 +90,8 @@ import Datetime from "../components/Datetime.vue";
 import Pagination from "v-pagination-3";
 import Confirm from "../components/Confirm.vue";
 import VigieMonitorCard from "../components/VigieMonitorCard.vue";
-import { UP, DOWN } from "../util.ts";
+import { UP, DOWN, PENDING, MAINTENANCE } from "../util.ts";
+import { formatMs, formatPercent } from "../sentinelle-format.js";
 
 export default {
     components: {
@@ -181,26 +156,37 @@ export default {
                 .sort((a, b) => isDown(b) - isDown(a));
         },
 
+        /**
+         * Sondes comptées dans les moyennes : actives, et dont le dernier état est connu
+         * (opérationnelle ou en panne). Les sondes en pause, en attente ou en maintenance
+         * ne faussent pas le résultat.
+         * @returns {object[]} sondes comptées
+         */
+        countedMonitors() {
+            return this.cardMonitors.filter((monitor) => {
+                const last = this.$root.lastHeartbeatList[monitor.id];
+                return monitor.active && last && (last.status === UP || last.status === DOWN);
+            });
+        },
+
         averageUptime() {
-            const values = this.cardMonitors
-                .filter((monitor) => monitor.active)
+            const values = this.countedMonitors
                 .map((monitor) => this.$root.uptimeList[`${monitor.id}_24`])
                 .filter((value) => typeof value === "number");
             if (values.length === 0) {
                 return "–";
             }
-            const average = (values.reduce((a, b) => a + b, 0) / values.length) * 100;
-            return average.toFixed(2).replace(".", ",");
+            return formatPercent(values.reduce((a, b) => a + b, 0) / values.length);
         },
 
         averagePing() {
-            const values = this.cardMonitors
+            const values = this.countedMonitors
                 .map((monitor) => this.$root.avgPingList[monitor.id])
                 .filter((value) => typeof value === "number" && value > 0);
             if (values.length === 0) {
                 return "–";
             }
-            return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+            return formatMs(values.reduce((a, b) => a + b, 0) / values.length);
         },
 
         showGroupColumn() {
@@ -241,10 +227,19 @@ export default {
 
     methods: {
         /**
-         * La sonde correspond-elle au filtre rapide ?
+         * Libellé court d'un événement
+         * @param {number} status état du battement
+         * @returns {string} libellé
+         */
+        eventLabel(status) {
+            return { [DOWN]: "Panne", [UP]: "Rétabli", [PENDING]: "Instable", [MAINTENANCE]: "Maintenance" }[status] || "—";
+        },
+
+        /**
+         * La sonde correspond-elle au filtre ?
          * @param {object} monitor sonde
          * @param {string} key all | up | down | paused
-         * @returns {boolean} vrai si elle doit être affichée
+         * @returns {boolean} vrai si elle correspond
          */
         matchesFilter(monitor, key) {
             if (key === "all") {

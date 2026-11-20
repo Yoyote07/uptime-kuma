@@ -1,11 +1,12 @@
 <template>
     <span v-if="isNum" ref="output">{{ outputFixed }}</span>
-    <span v-if="isNum">{{ unit }}</span>
+    <span v-if="isNum">&nbsp;{{ unit }}</span>
     <span v-else>{{ value }}</span>
 </template>
 
 <script lang="ts">
 import { sleep } from "../util.ts";
+import { formatNumber } from "../sentinelle-format.js";
 
 export default {
     props: {
@@ -40,11 +41,9 @@ export default {
             if (typeof this.output === "number") {
                 if (this.output < 1) {
                     return "<1";
-                } else if (Number.isInteger(this.output)) {
-                    return this.output;
-                } else {
-                    return this.output.toFixed(2);
                 }
+                // Sentinelle : format français (« 4,09 », « 152 »)
+                return formatNumber(this.output, this.output < 10 ? 2 : this.output < 100 ? 1 : 0);
             } else {
                 return this.output;
             }

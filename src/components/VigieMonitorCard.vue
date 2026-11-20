@@ -18,7 +18,7 @@
 
         <!-- Un seul visuel : le graphique si la sonde mesure un temps de réponse, sinon l'historique -->
         <PingSparkline v-if="hasPing" :monitor-id="monitor.id" :show-value="false" :smooth="true" :color="stateColor" />
-        <div v-else class="vigie-beats">
+        <div v-else class="vigie-beats" title="Dernières 24 h">
             <i v-for="n in emptyBeats" :key="`e${n}`" class="empty" />
             <i v-for="(beat, index) in recentBeats" :key="index" :class="`s${beat.status}`" />
         </div>
@@ -28,6 +28,7 @@
 <script>
 import PingSparkline from "./PingSparkline.vue";
 import { UP, DOWN, PENDING, MAINTENANCE } from "../util.ts";
+import { formatMs, formatPercent } from "../sentinelle-format.js";
 
 const BEATS_SHOWN = 40;
 
@@ -92,8 +93,19 @@ export default {
             return this.$root.heartbeatList[this.monitor.id] || [];
         },
 
+        /**
+         * Battements des dernières 24 h seulement, pour que la barre corresponde au pourcentage 24 h
+         * (une sonde Push vérifiée toutes les heures aurait sinon une barre couvrant plusieurs jours)
+         * @returns {object[]} battements récents
+         */
         recentBeats() {
-            return this.beats.slice(-BEATS_SHOWN);
+            const since = Date.now() - 24 * 3600 * 1000;
+            return this.beats
+                .filter((beat) => {
+                    const time = Date.parse(String(beat.time).replace(" ", "T") + "Z");
+                    return Number.isNaN(time) || time >= since;
+                })
+                .slice(-BEATS_SHOWN);
         },
 
         emptyBeats() {
@@ -163,16 +175,11 @@ export default {
 
         pingText() {
             const pings = this.beats.filter((beat) => typeof beat.ping === "number");
-            return pings.length ? `${pings[pings.length - 1].ping} ms` : "24 h";
+            return pings.length ? formatMs(pings[pings.length - 1].ping) : "24 h";
         },
 
         uptimeText() {
-            const uptime = this.$root.uptimeList[`${this.monitor.id}_24`];
-            if (typeof uptime !== "number") {
-                return "–";
-            }
-            const percent = uptime * 100;
-            return `${percent === 100 ? "100" : percent.toFixed(1).replace(".", ",")} %`;
+            return formatPercent(this.$root.uptimeList[`${this.monitor.id}_24`]);
         },
     },
 };
