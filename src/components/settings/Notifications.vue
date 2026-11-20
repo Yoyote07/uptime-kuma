@@ -1,25 +1,10 @@
 <template>
     <div>
-        <div class="notification-list my-4">
-            <p v-if="$root.notificationList.length === 0">
-                {{ $t("Not available, please setup.") }}
-            </p>
-            <p v-else>
-                {{ $t("notificationDescription") }}
-            </p>
-
-            <ul class="list-group mb-3" style="border-radius: 1rem">
-                <li v-for="(notification, index) in $root.notificationList" :key="index" class="list-group-item">
-                    {{ notification.name }}
-                    <br />
-                    <a href="#" @click="$refs.notificationDialog.show(notification.id)">{{ $t("Edit") }}</a>
-                </li>
-            </ul>
-
-            <button class="btn btn-primary me-2" type="button" @click="$refs.notificationDialog.show()">
-                {{ $t("Setup Notification") }}
-            </button>
-        </div>
+        <p class="sentinelle-muted mt-3">
+            Les canaux d'alerte (Discord, ntfy, e-mail…) se gèrent dans la page
+            <router-link to="/alertes">Alertes</router-link>. Ici, les messages de l'interface et les rappels
+            d'expiration.
+        </p>
 
         <div class="my-4 pt-4">
             <h5 class="my-4 settings-subheading">{{ $t("monitorToastMessagesLabel") }}</h5>
@@ -130,17 +115,14 @@
             </div>
         </div>
 
-        <NotificationDialog ref="notificationDialog" />
     </div>
 </template>
 
 <script>
-import NotificationDialog from "../../components/NotificationDialog.vue";
 import ActionInput from "../ActionInput.vue";
 
 export default {
     components: {
-        NotificationDialog,
         ActionInput,
     },
 

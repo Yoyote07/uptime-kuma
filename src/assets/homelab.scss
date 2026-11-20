@@ -1283,3 +1283,49 @@ body.dark {
         margin-bottom: 0 !important;
     }
 }
+
+// ============================================================
+// Éléments communs des pages Sentinelle
+// ============================================================
+
+.sentinelle-page {
+    max-width: 1700px;
+    margin: 0 auto;
+}
+
+.sentinelle-muted {
+    color: $muted;
+}
+
+.sentinelle-hint {
+    margin-top: 22px;
+    font-size: 13.5px;
+    color: $muted;
+
+    strong {
+        color: #c9cfe0;
+        font-weight: 500;
+    }
+}
+
+.sentinelle-empty {
+    text-align: center;
+    padding: 50px 20px;
+    border-radius: 16px;
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    background: rgba(17, 24, 45, 0.35);
+
+    p {
+        margin-bottom: 6px;
+    }
+
+    .btn {
+        margin-top: 14px;
+    }
+}
+
+.sentinelle-empty-icon {
+    font-size: 28px;
+    color: $accent;
+    margin-bottom: 12px;
+}

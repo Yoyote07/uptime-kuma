@@ -92,7 +92,7 @@ export default {
                     title: this.$t("Appearance"),
                 },
                 notifications: {
-                    title: this.$t("Notifications"),
+                    title: "Messages et expirations",
                 },
                 "reverse-proxy": {
                     title: this.$t("Reverse Proxy"),

@@ -33,7 +33,7 @@
                 <router-link
                     to="/settings/general"
                     class="vigie-nav"
-                    :class="{ on: $route.path.startsWith('/settings') && !$route.path.includes('notifications') }"
+                    :class="{ on: $route.path.startsWith('/settings') }"
                 >
                     <font-awesome-icon icon="cog" />
                     <span class="vigie-label">{{ $t("Settings") }}</span>
@@ -110,7 +110,7 @@ export default {
             return [
                 { to: "/dashboard", icon: "th-large", label: "Vue d'ensemble", match: ["/dashboard", "/list"] },
                 { to: "/add", icon: "plus", label: "Ajouter une sonde", match: ["/add", "/clone", "/edit"] },
-                { to: "/settings/notifications", icon: "bell", label: "Alertes", match: ["/settings/notifications"] },
+                { to: "/alertes", icon: "bell", label: "Alertes", match: ["/alertes"] },
                 { to: "/maintenance", icon: "wrench", label: this.$t("Maintenance"), match: ["/maintenance", "/add-maintenance"] },
                 { to: "/manage-status-page", icon: "stream", label: this.$t("Status Pages"), match: ["/manage-status-page", "/add-status-page"] },
             ];
