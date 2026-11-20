@@ -12,10 +12,6 @@
             </router-link>
             <h1>
                 {{ monitor.name }}
-                <div class="monitor-id">
-                    <div class="hash">#</div>
-                    <div>{{ monitor.id }}</div>
-                </div>
             </h1>
             <!-- eslint-disable-next-line vue/no-v-html-->
             <p v-if="monitor.description" v-html="descriptionHTML"></p>
@@ -132,7 +128,7 @@
                 <div class="btn-group" role="group">
                     <button v-if="monitor.active" class="btn btn-normal" @click="pauseDialog">
                         <font-awesome-icon icon="pause" />
-                        {{ $t("Pause") }}
+                        Mettre en pause
                     </button>
                     <button
                         v-if="!monitor.active"
@@ -141,7 +137,7 @@
                         @click="resumeMonitor"
                     >
                         <font-awesome-icon icon="play" />
-                        {{ $t("Resume") }}
+                        Reprendre
                     </button>
                     <router-link :to="'/edit/' + monitor.id" class="btn btn-normal">
                         <font-awesome-icon icon="edit" />

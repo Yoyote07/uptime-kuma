@@ -45,6 +45,7 @@ import {
 import "chartjs-adapter-dayjs-4";
 import { Line } from "vue-chartjs";
 import { UP, DOWN, PENDING, MAINTENANCE } from "../util.ts";
+import { formatMs, formatNumber } from "../sentinelle-format.js";
 
 Chart.register(
     LineController,
@@ -127,10 +128,10 @@ export default {
                         time: {
                             minUnit: "minute",
                             round: "second",
-                            tooltipFormat: "YYYY-MM-DD HH:mm:ss",
+                            tooltipFormat: "DD/MM/YYYY HH:mm:ss",
                             displayFormats: {
                                 minute: "HH:mm",
-                                hour: "MM-DD HH:mm",
+                                hour: "DD/MM HH:mm",
                             },
                         },
                         ticks: {
@@ -138,20 +139,27 @@ export default {
                             maxRotation: 0,
                             autoSkipPadding: 30,
                             padding: 3,
+                            color: "#8b93ad",
+                            font: { family: "'JetBrains Mono', monospace", size: 11 },
                         },
                         grid: {
-                            color: this.$root.theme === "light" ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.1)",
+                            color: "rgba(255,255,255,0.06)",
                             offset: false,
                         },
                     },
                     y: {
                         title: {
-                            display: true,
-                            text: this.$t("respTime"),
+                            display: false,
                         },
                         offset: false,
+                        border: { display: false },
+                        ticks: {
+                            color: "#8b93ad",
+                            font: { family: "'JetBrains Mono', monospace", size: 11 },
+                            callback: (value) => `${formatNumber(value, 1)} ms`,
+                        },
                         grid: {
-                            color: this.$root.theme === "light" ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.1)",
+                            color: "rgba(255,255,255,0.06)",
                         },
                     },
                     y1: {
@@ -171,9 +179,14 @@ export default {
                         mode: "nearest",
                         intersect: false,
                         padding: 10,
-                        backgroundColor: this.$root.theme === "light" ? "rgba(212,232,222,1.0)" : "rgba(32,42,38,1.0)",
-                        bodyColor: this.$root.theme === "light" ? "rgba(12,12,18,1.0)" : "rgba(220,220,220,1.0)",
-                        titleColor: this.$root.theme === "light" ? "rgba(12,12,18,1.0)" : "rgba(220,220,220,1.0)",
+                        cornerRadius: 10,
+                        backgroundColor: "rgba(14,20,38,0.95)",
+                        borderColor: "rgba(255,255,255,0.08)",
+                        borderWidth: 1,
+                        bodyColor: "#e6e9f5",
+                        titleColor: "#8b93ad",
+                        titleFont: { family: "'JetBrains Mono', monospace", size: 11, weight: "normal" },
+                        bodyFont: { family: "'Outfit', sans-serif", size: 13 },
                         // No longer rely solely on datasetIndex === 0; we want to hide tooltips only for the bars
                         filter: function (tooltipItem) {
                             const ds = tooltipItem?.chart?.data?.datasets?.[tooltipItem.datasetIndex];
@@ -182,13 +195,13 @@ export default {
                         callbacks: {
                             label: (context) => {
                                 const label = context.dataset.label;
-                                return `${label} ${new Intl.NumberFormat().format(context.parsed.y)} ms`;
+                                return `${label} : ${formatMs(context.parsed.y)}`;
                             },
                         },
                     },
                     legend: {
-                        // Enable the legend and display only the non-bar datasets (the lines)
-                        display: true,
+                        // Sentinelle : pas de légende, les infobulles disent déjà ce que montre chaque courbe
+                        display: false,
                         position: "top",
                         align: "start",
                         // Indicates that the legend is clickable (cursor pointer)
@@ -291,16 +304,16 @@ export default {
         getBarColorForDatapoint(datapoint) {
             if (datapoint.maintenance != null) {
                 // Target is in maintenance
-                return "rgba(23,71,245,0.41)";
+                return "rgba(143,163,217,0.35)";
             } else if (datapoint.down === 0) {
                 // Target is up, no need to display a bar
                 return "#000";
             } else if (datapoint.up === 0) {
                 // Target is down
-                return "rgba(220, 53, 69, 0.41)";
+                return "rgba(224,108,117,0.35)";
             } else {
                 // Show yellow for mixed status
-                return "rgba(245, 182, 23, 0.41)";
+                return "rgba(217,180,108,0.35)";
             }
         },
         // push datapoint to chartData
@@ -398,13 +411,13 @@ export default {
                 });
                 switch (beat.status) {
                     case MAINTENANCE:
-                        colorData.push("rgba(23 ,71, 245, 0.41)");
+                        colorData.push("rgba(143,163,217,0.35)");
                         break;
                     case PENDING:
-                        colorData.push("rgba(245, 182, 23, 0.41)");
+                        colorData.push("rgba(217,180,108,0.35)");
                         break;
                     default:
-                        colorData.push("rgba(220, 53, 69, 0.41)");
+                        colorData.push("rgba(224,108,117,0.35)");
                 }
 
                 lastHeartbeatTime = beatTime;
@@ -417,8 +430,11 @@ export default {
                         data: pingData,
                         fill: "origin",
                         tension: 0.2,
-                        borderColor: "#4ABF74",
-                        backgroundColor: "#4ABF7438",
+                        borderColor: "#6fbfa3",
+                        backgroundColor: "rgba(111,191,163,0.12)",
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
                         yAxisID: "y",
                         label: this.$t("avgPing"),
                     },
@@ -547,8 +563,10 @@ export default {
                         data: minPingData,
                         fill: "origin",
                         tension: 0.2,
-                        borderColor: "#126331",
-                        backgroundColor: "#2F9C5914",
+                        borderColor: "rgba(111,191,163,0.35)",
+                        backgroundColor: "rgba(0,0,0,0)",
+                        borderWidth: 1,
+                        pointRadius: 0,
                         yAxisID: "y",
                         label: this.$t("minPing"),
                     },
@@ -557,8 +575,11 @@ export default {
                         data: avgPingData,
                         fill: "origin",
                         tension: 0.2,
-                        borderColor: "#5CDD8B",
-                        backgroundColor: "#5CDD8B06",
+                        borderColor: "#6fbfa3",
+                        backgroundColor: "rgba(111,191,163,0.12)",
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
                         yAxisID: "y",
                         label: this.$t("avgPing"),
                     },
@@ -567,8 +588,10 @@ export default {
                         data: maxPingData,
                         fill: "origin",
                         tension: 0.2,
-                        borderColor: "#21b55a",
-                        backgroundColor: "#1E7A4214",
+                        borderColor: "rgba(111,191,163,0.35)",
+                        backgroundColor: "rgba(0,0,0,0)",
+                        borderWidth: 1,
+                        pointRadius: 0,
                         yAxisID: "y",
                         label: this.$t("maxPing"),
                     },
